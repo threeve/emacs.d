@@ -1,2 +1,6 @@
-auto-save-list
+*~
 *.elc
+
+/elpa
+
+auto-save-list
