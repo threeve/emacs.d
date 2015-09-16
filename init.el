@@ -17,5 +17,11 @@
 (require 'diminish)
 (require 'bind-key)
 
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode t)
+  (define-key evil-normal-state-map ";" 'evil-ex))
+
 (provide 'init)
 ;;; init.el ends here
