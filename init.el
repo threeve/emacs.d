@@ -52,6 +52,10 @@
                     :height 120
                     :weight 'normal)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config (exec-path-from-shell-initialize))
+
 (use-package evil
   :ensure t
   :config
@@ -73,6 +77,10 @@
   (define-key evil-normal-state-map "[h" 'git-gutter:previous-hunk)
   (define-key evil-normal-state-map (kbd "<SPC> h s") 'git-gutter:stage-hunk)
   (global-git-gutter-mode))
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md$" . gfm-mode))
 
 (provide 'init)
 ;;; init.el ends here
