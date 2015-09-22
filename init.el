@@ -82,5 +82,20 @@
   :ensure t
   :mode ("\\.md$" . gfm-mode))
 
+(use-package mmm-mode
+  :ensure t
+  :diminish mmm-mode
+  :config
+  (setq mmm-global-mode 'maybe
+        mmm-submode-decoration-level 0)
+  (mmm-add-classes
+   '((markdown-objc
+      :submode objc-mode
+      :front "^\\([ \t]*```\\)objc\n"
+      :back "^~1$"
+      :save-matches t
+      :end-not-begin t)))
+  (mmm-add-mode-ext-class 'gfm-mode nil 'markdown-objc))
+
 (provide 'init)
 ;;; init.el ends here
