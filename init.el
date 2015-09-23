@@ -113,5 +113,10 @@
       :end-not-begin t)))
   (mmm-add-mode-ext-class 'gfm-mode nil 'markdown-objc))
 
+(use-package flyspell
+  :config
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+
 (provide 'init)
 ;;; init.el ends here
