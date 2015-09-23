@@ -52,6 +52,10 @@
                     :height 120
                     :weight 'normal)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config (exec-path-from-shell-initialize))
+
 (use-package evil
   :ensure t
   :config
@@ -73,6 +77,46 @@
   (define-key evil-normal-state-map "[h" 'git-gutter:previous-hunk)
   (define-key evil-normal-state-map (kbd "<SPC> h s") 'git-gutter:stage-hunk)
   (global-git-gutter-mode))
+
+(defun jafo/flyspell-ignore-fenced-code-blocks ()
+  "excludes code within a markdown fenced code block from flyspell"
+  (save-excursion
+    (widen)
+    (let ((p (point))
+          (count 0))
+      (not (or (and (re-search-backward "^[ \t]*```" nil t)
+                    (> p (point))
+                    (or (not (re-search-forward "^[ \t]*```" nil t))
+                        (< p (point))))
+               (eq 1 (progn (while (re-search-backward "`" (line-beginning-position) t)
+                              (setq count (1+ count)))
+                            (- count (* 2 (/ count 2))))))))))
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md$" . gfm-mode)
+  :config
+  (put 'gfm-mode 'flyspell-mode-predicate 'jafo/flyspell-ignore-fenced-code-blocks))
+
+(use-package mmm-mode
+  :ensure t
+  :diminish mmm-mode
+  :config
+  (setq mmm-global-mode 'maybe
+        mmm-submode-decoration-level 0)
+  (mmm-add-classes
+   '((markdown-objc
+      :submode objc-mode
+      :front "^\\([ \t]*```\\)objc\n"
+      :back "^~1$"
+      :save-matches t
+      :end-not-begin t)))
+  (mmm-add-mode-ext-class 'gfm-mode nil 'markdown-objc))
+
+(use-package flyspell
+  :config
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode))
 
 (provide 'init)
 ;;; init.el ends here
