@@ -19,13 +19,7 @@
 
 (setq
  create-lockfiles nil
- make-backup-files nil
- require-final-newline t)
-
-(setq-default
- indent-tabs-mode nil)
-
-(auto-save-mode 0)
+ make-backup-files nil)
 
 (use-package exec-path-from-shell
   :ensure t
@@ -37,6 +31,7 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (use-package init-ui)
+(use-package init-editing)
 (use-package init-evil)
 (use-package init-ido)
 
