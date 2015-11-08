@@ -18,6 +18,7 @@
   (global-set-key (kbd "C-=") #'er/expand-region)
   (global-set-key (kbd "C--") #'er/contract-region))
 
+(add-hook 'text-mode-hook #'turn-on-auto-fill)
 (setq
  require-final-newline t)
 
