@@ -18,6 +18,12 @@
                     :height 120
                     :weight 'normal)
 
+(use-package smart-mode-line
+  :ensure t
+  :config
+  (setq sml/theme 'respectful)
+  (sml/setup))
+
 (setq
  blink-matching-paren t
  echo-keystrokes 0.02
