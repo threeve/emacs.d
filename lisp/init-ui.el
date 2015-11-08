@@ -47,6 +47,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 (fringe-mode '(4 . 0))
 (global-hl-line-mode t)
+(global-prettify-symbols-mode t)
 (global-visual-line-mode 0)
 (line-number-mode 0)
 (scroll-bar-mode 0)
