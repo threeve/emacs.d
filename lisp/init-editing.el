@@ -18,6 +18,11 @@
   (global-set-key (kbd "C-=") #'er/expand-region)
   (global-set-key (kbd "C--") #'er/contract-region))
 
+(use-package ace-jump-mode
+  :ensure t
+  :bind (("s-j" . ace-jump-mode)
+         ("s-J" . ace-jump-line-mode)))
+
 (add-hook 'text-mode-hook #'turn-on-auto-fill)
 (add-hook 'text-mode-hook #'bug-reference-mode)
 (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
