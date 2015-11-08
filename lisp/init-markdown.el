@@ -31,5 +31,9 @@
   (put 'markdown-mode
        'flyspell-mode-predicate #'jafo/flyspell-ignore-fenced-code-blocks))
 
+(use-package pandoc-mode
+  :ensure t
+  :config (add-hook 'markdown-mode-hook 'pandoc-mode))
+
 (provide 'init-markdown)
 ;; init-markdown.el ends here
