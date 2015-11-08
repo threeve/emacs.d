@@ -24,6 +24,13 @@
   (setq sml/theme 'respectful)
   (sml/setup))
 
+(use-package which-key
+  :ensure t
+  :diminish ""
+  :config
+  (setq which-key-idle-delay 0.5)
+  (which-key-mode t))
+
 (setq
  blink-matching-paren t
  echo-keystrokes 0.02
