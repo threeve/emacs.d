@@ -19,6 +19,9 @@
   (global-set-key (kbd "C--") #'er/contract-region))
 
 (add-hook 'text-mode-hook #'turn-on-auto-fill)
+(add-hook 'text-mode-hook #'bug-reference-mode)
+(add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+
 (setq
  require-final-newline t)
 
