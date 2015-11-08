@@ -37,14 +37,9 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (use-package init-ui)
+(use-package init-evil)
 
 ;; additional packages
-(use-package evil
-  :ensure t
-  :config
-  (evil-mode t)
-  (add-hook 'git-commit-mode-hook 'evil-insert-state)
-  (define-key evil-normal-state-map ";" 'evil-ex))
 
 (use-package magit
   :ensure t
