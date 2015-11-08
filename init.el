@@ -38,6 +38,7 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (use-package init-ui)
 (use-package init-evil)
+(use-package init-ido)
 
 ;; additional packages
 
