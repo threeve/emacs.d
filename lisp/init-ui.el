@@ -22,6 +22,8 @@
  indicate-empty-lines t
  inhibit-startup-screen t
  initial-scratch-message nil
+ mac-option-modifier 'none
+ mac-right-command-modifier 'meta
  ring-bell-function 'ignore
  scroll-conservatively 10000
  scroll-preserve-screen-position t
