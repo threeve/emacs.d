@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(prefer-coding-system 'utf-8-unix)
+
 (eval-when-compile
   (require 'use-package))
 
