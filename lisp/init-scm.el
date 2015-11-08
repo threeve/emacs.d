@@ -13,14 +13,9 @@
   (setq magit-push-always-verify nil)
   (define-key evil-normal-state-map (kbd "<SPC> g") 'magit-status))
 
-(use-package git-gutter
+(use-package diff-hl
   :ensure t
-  :config
-  (setq git-gutter:ask-p nil)
-  (define-key evil-normal-state-map "]h" 'git-gutter:next-hunk)
-  (define-key evil-normal-state-map "[h" 'git-gutter:previous-hunk)
-  (define-key evil-normal-state-map (kbd "<SPC> h s") 'git-gutter:stage-hunk)
-  (global-git-gutter-mode))
+  :config (global-diff-hl-mode))
 
 (provide 'init-scm)
 ;; init-scm.el ends here
