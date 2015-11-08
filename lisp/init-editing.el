@@ -34,6 +34,7 @@
  indent-tabs-mode nil)
 
 (auto-save-mode 0)
+(global-auto-revert-mode t)
 
 (provide 'init-editing)
 ;; init-editing.el ends here
