@@ -10,6 +10,14 @@
 (use-package editorconfig
   :ensure t)
 
+(use-package expand-region
+  :ensure t
+  :commands (er/expand-region
+             er/contract-region)
+  :init
+  (global-set-key (kbd "C-=") #'er/expand-region)
+  (global-set-key (kbd "C--") #'er/contract-region))
+
 (setq
  require-final-newline t)
 
