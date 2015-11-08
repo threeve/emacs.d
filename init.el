@@ -18,44 +18,27 @@
 (require 'bind-key)
 
 (setq
- blink-matching-paren t
  create-lockfiles nil
- custom-file "~/.emacs.d/custom.el"
- inhibit-startup-screen t
- initial-scratch-message nil
  make-backup-files nil
- require-final-newline t
- ring-bell-function 'ignore
- use-dialog-box nil)
+ require-final-newline t)
 
 (setq-default
  indent-tabs-mode nil)
 
-(fset 'yes-or-no-p 'y-or-n-p)
-
 (auto-save-mode 0)
-(global-visual-line-mode 0)
-(line-number-mode 0)
-(scroll-bar-mode 0)
-(show-paren-mode t)
-(tool-bar-mode 0)
-
-(load custom-file 'noerror)
-
-(use-package noctilux-theme
-  :ensure t
-  :config
-  (load-theme 'noctilux))
-
-(set-face-attribute 'default nil
-                    :family "Source Code Pro"
-                    :height 120
-                    :weight 'normal)
 
 (use-package exec-path-from-shell
   :ensure t
   :config (exec-path-from-shell-initialize))
 
+;; my customizations
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file 'noerror)
+
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(use-package init-ui)
+
+;; additional packages
 (use-package evil
   :ensure t
   :config
