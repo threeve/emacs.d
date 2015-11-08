@@ -4,6 +4,12 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'use-package))
+
+(use-package editorconfig
+  :ensure t)
+
 (setq
  require-final-newline t)
 
