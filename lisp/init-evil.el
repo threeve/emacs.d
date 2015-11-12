@@ -20,7 +20,8 @@
   (use-package evil-surround
     :ensure t
     :config (global-evil-surround-mode t))
-  (setq evil-want-Y-yank-to-eol t)
+  (setq evil-want-C-w-in-emacs-state t
+        evil-want-Y-yank-to-eol t)
   (evil-mode t)
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
   (define-key evil-normal-state-map "j" 'evil-next-visual-line)

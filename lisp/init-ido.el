@@ -23,7 +23,13 @@
 
 (use-package ido-vertical-mode
   :ensure t
-  :config (ido-vertical-mode t))
+  :config
+  (defun jafo/ido-setup-hook ()
+    (define-key ido-completion-map (kbd "C-j") 'ido-next-match)
+    (define-key ido-completion-map (kbd "C-k") 'ido-prev-match))
+  (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+  (ido-vertical-mode t))
 
 (use-package smex
   :ensure t

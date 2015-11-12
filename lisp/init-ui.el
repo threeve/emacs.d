@@ -6,6 +6,9 @@
 
 (prefer-coding-system 'utf-8-unix)
 
+;; (set-frame-parameter nil 'fullscreen 'fullboth)
+(add-hook 'emacs-startup-hook #'toggle-frame-fullscreen)
+
 (eval-when-compile
   (require 'use-package))
 
@@ -17,6 +20,24 @@
                     :family "Source Code Pro"
                     :height 120
                     :weight 'normal)
+
+;; make emoji work, e.g. burrito: 🌯
+(set-fontset-font t 'symbol
+                  (font-spec :family "Apple Color Emoji"
+                             :height 120)
+                  nil 'prepend)
+
+;; devicons private use area, e.g. React logo: 
+;; http://vorillaz.github.io/devicons/#/main
+(set-fontset-font t '(#xe600 . #xe6ff)
+                  (font-spec :family "icomoon")
+                  nil 'prepend)
+
+;; FontAwesome private use area, e.g. Empire logo: 
+;; https://fortawesome.github.io/Font-Awesome/
+(set-fontset-font t '(#xf000 . #xf3ff)
+                  (font-spec :family "FontAwesome")
+                  nil 'prepend)
 
 (use-package smart-mode-line
   :ensure t
@@ -31,6 +52,21 @@
   (setq which-key-idle-delay 0.5)
   (which-key-mode t))
 
+(use-package highlight-numbers
+  :ensure t
+  :config (add-hook 'prog-mode-hook #'highlight-numbers-mode))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :config (add-hook 'objc-mode-hook #'rainbow-delimiters-mode))
+
+(use-package indent-guide
+  :ensure t
+  :diminish ""
+  :config
+  (setq indent-guide-char "│")
+  (add-hook 'prog-mode-hook #'indent-guide-mode))
+
 (setq
  blink-matching-paren t
  echo-keystrokes 0.02
@@ -39,6 +75,7 @@
  initial-scratch-message nil
  mac-option-modifier 'none
  mac-right-command-modifier 'meta
+ mouse-wheel-scroll-amount '(1 ((shift) . 5))
  ring-bell-function 'ignore
  scroll-conservatively 10000
  scroll-preserve-screen-position t
