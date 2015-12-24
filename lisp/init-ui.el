@@ -6,6 +6,8 @@
 
 (prefer-coding-system 'utf-8-unix)
 
+(add-hook 'emacs-startup-hook #'toggle-frame-fullscreen)
+
 (eval-when-compile
   (require 'use-package))
 
