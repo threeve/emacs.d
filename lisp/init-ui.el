@@ -49,6 +49,21 @@
   (setq which-key-idle-delay 0.3)
   (which-key-mode t))
 
+(use-package highlight-numbers
+  :ensure t
+  :config (add-hook 'prog-mode-hook #'highlight-numbers-mode))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :config (add-hook 'objc-mode-hook #'rainbow-delimiters-mode))
+
+(use-package indent-guide
+  :ensure t
+  :diminish ""
+  :config
+  (setq indent-guide-char "│")
+  (add-hook 'prog-mode-hook #'indent-guide-mode))
+
 (setq
  blink-matching-paren t
  echo-keystrokes 0.02
