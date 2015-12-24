@@ -39,6 +39,10 @@
 (use-package init-scm)
 (use-package init-writing)
 
+;; programming cruft
+
+(use-package prog-objc)
+
 ;; additional packages
 
 (use-package mmm-mode
@@ -55,6 +59,38 @@
       :save-matches t
       :end-not-begin t)))
   (mmm-add-mode-ext-class 'gfm-mode nil 'markdown-objc))
+
+(use-package flycheck
+  :ensure t
+  :config
+  ;; not sure I like this...
+  ;; (use-package flycheck-pos-tip
+  ;;   :ensure t
+  ;;   :config
+  ;;   (eval-after-load 'flycheck
+  ;;     '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
+  (setq flycheck-display-errors-delay 0.4
+        flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(use-package company
+  :ensure t
+  :diminish ""
+  :config
+  (use-package company-quickhelp :ensure t) ; doesn't seem to work?
+  (use-package company-flx :ensure t)       ; only works with capf, not interesting stuff like irony
+  (define-key company-active-map (kbd "C-n") #'company-select-next)
+  (define-key company-active-map (kbd "C-j") #'company-select-next)
+  (define-key company-active-map (kbd "C-p") #'company-select-previous)
+  (define-key company-active-map (kbd "C-k") #'company-select-previous)
+  (setq company-idle-delay 0.2))
+
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :config
+  (setq yas-prompt-functions '(yas-completing-prompt))
+  (yas-global-mode t))
 
 (provide 'init)
 ;;; init.el ends here
