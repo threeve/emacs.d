@@ -18,6 +18,24 @@
                     :height 120
                     :weight 'normal)
 
+;; make emoji work, e.g. burrito: 🌯
+(set-fontset-font t 'symbol
+                  (font-spec :family "Apple Color Emoji"
+                             :height 120)
+                  nil 'prepend)
+
+;; devicons private use area, e.g. React logo: 
+;; http://vorillaz.github.io/devicons/#/main
+(set-fontset-font t '(#xe600 . #xe6ff)
+                  (font-spec :family "icomoon")
+                  nil 'prepend)
+
+;; FontAwesome private use area, e.g. Empire logo: 
+;; https://fortawesome.github.io/Font-Awesome/
+(set-fontset-font t '(#xf000 . #xf3ff)
+                  (font-spec :family "FontAwesome")
+                  nil 'prepend)
+
 (use-package smart-mode-line
   :ensure t
   :config
