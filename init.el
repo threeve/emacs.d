@@ -42,6 +42,7 @@
 ;; programming cruft
 
 (use-package prog-objc)
+(use-package prog-js)
 
 ;; additional packages
 
