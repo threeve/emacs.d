@@ -46,7 +46,7 @@
   :ensure t
   :diminish ""
   :config
-  (setq which-key-idle-delay 0.5)
+  (setq which-key-idle-delay 0.3)
   (which-key-mode t))
 
 (setq
