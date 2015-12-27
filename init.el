@@ -43,6 +43,7 @@
 
 (use-package prog-objc)
 (use-package prog-js)
+(use-package prog-clojure)
 
 ;; additional packages
 
