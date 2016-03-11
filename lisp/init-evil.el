@@ -6,7 +6,11 @@
 
 (use-package evil
   :ensure t
+  :init
+  (setq evil-want-C-w-in-emacs-state t
+        evil-want-Y-yank-to-eol t)
   :config
+  (use-package evil-ediff :ensure t)
   (use-package evil-commentary
     :ensure t
     :diminish ""
@@ -17,8 +21,6 @@
   (use-package evil-surround
     :ensure t
     :config (global-evil-surround-mode t))
-  (setq evil-want-C-w-in-emacs-state t
-        evil-want-Y-yank-to-eol t)
   (evil-mode t)
   (add-hook 'git-commit-mode-hook 'evil-insert-state)
   (define-key evil-normal-state-map "j" 'evil-next-visual-line)
@@ -27,8 +29,7 @@
   (define-key evil-normal-state-map (kbd "C-k") 'evil-scroll-up)
   (define-key evil-motion-state-map (kbd "C-j") 'evil-scroll-down)
   (define-key evil-motion-state-map (kbd "C-k") 'evil-scroll-up)
-  (define-key evil-normal-state-map ";" 'evil-ex)
-  (define-key evil-visual-state-map ";" 'evil-ex))
+  )
 
 (provide 'init-evil)
 ;; init-evil.el ends here
