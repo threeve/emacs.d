@@ -4,9 +4,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'use-package))
-
 (defun jafo/flyspell-ignore-fenced-code-blocks ()
   "excludes code within a markdown fenced code block from flyspell"
   (save-excursion

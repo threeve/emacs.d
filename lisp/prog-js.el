@@ -2,9 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(eval-when-compile
-  (require 'use-package))
-
 ;; TODO: both web-mode and js2-mode have some amount of jsx support, need to compare.
 
 (use-package web-mode

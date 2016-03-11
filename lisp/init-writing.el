@@ -4,9 +4,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'use-package))
-
 (use-package flyspell
   :config
   (add-hook 'text-mode-hook 'flyspell-mode)
