@@ -23,6 +23,11 @@
                     :height 120
                     :weight 'normal)
 
+(set-face-attribute 'variable-pitch nil
+                    :family "Iowan Old Style"
+                    :height 140
+                    :weight 'normal)
+
 ;; make emoji work, e.g. burrito: 🌯
 (set-fontset-font t 'symbol
                   (font-spec :family "Apple Color Emoji"
@@ -51,7 +56,12 @@
   :ensure t
   :diminish ""
   :config
-  (setq which-key-idle-delay 0.3)
+  (setq which-key-idle-delay 0.3
+        which-key-add-column-padding 0)
+  (which-key-declare-prefixes
+    "<SPC> g" '("git/scm" . "Magit, git, scm commands")
+    "<SPC> p" '("projectile" . "Projectile commands")
+    )
   (which-key-mode t))
 
 (use-package highlight-numbers
