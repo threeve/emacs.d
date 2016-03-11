@@ -94,5 +94,19 @@
   (setq yas-prompt-functions '(yas-completing-prompt))
   (yas-global-mode t))
 
+(use-package paradox
+  :ensure t
+  :commands (paradox-list-packages)
+  :init
+  (define-key evil-normal-state-map (kbd "<SPC> u p") 'paradox-list-packages)
+  (define-key evil-normal-state-map (kbd "<SPC> u P") 'package-list-packages-no-fetch)
+  (evil-set-initial-state 'paradox-menu-mode 'motion)
+  :config
+  (setq paradox-display-download-count t
+        paradox-execute-asynchronously nil
+        paradox-hide-wiki-packages t
+        paradox-spinner-type 'moon
+        paradox-use-homepage-buttons nil))
+
 (provide 'init)
 ;;; init.el ends here
