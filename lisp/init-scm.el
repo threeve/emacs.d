@@ -6,19 +6,20 @@
 
 (use-package magit
   :ensure t
+  :bind (:map evil-normal-state-map
+              ("<SPC> g b" . magit-blame)
+              ("<SPC> g c" . magit-clone)
+              ("<SPC> g d" . magit-diff-buffer-file-popup)
+              ("<SPC> g l" . magit-log-buffer-file)
+              ("<SPC> g s" . magit-status)
+              )
   :config
-  (setq magit-push-always-verify nil)
-  (evil-make-overriding-map magit-mode-map 'emacs)
-  (evil-define-key 'emacs magit-mode-map "j" #'magit-section-forward)
-  (evil-define-key 'emacs magit-mode-map "k" #'magit-section-backward)
-  ;; (evil-define-key 'emacs magit-mode-map "C-j" #'magit-section-forward-sibling) ; TODO: this doesn't work quite right...
-  ;; (evil-define-key 'emacs magit-mode-map "C-k" #'magit-section-backward-sibling)
-  (define-key magit-mode-map (kbd "C-w") 'evil-window-map)
-  (define-key evil-normal-state-map (kbd "<SPC> g") 'magit-status))
+  (use-package evil-magit :ensure t)
+  (setq magit-completing-read-function #'magit-ido-completing-read))
 
 (use-package diff-hl
   :ensure t
   :config (global-diff-hl-mode))
 
 (provide 'init-scm)
-;; init-scm.el ends here
+;;; init-scm.el ends here
