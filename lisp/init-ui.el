@@ -8,10 +8,15 @@
 
 (add-hook 'emacs-startup-hook #'toggle-frame-fullscreen)
 
-
 (use-package noctilux-theme
+  :disabled t
   :ensure t
-  :config (load-theme 'noctilux))
+  :config (load-theme 'noctilux t))
+
+(use-package eink-theme
+  :ensure t
+  :config (load-theme 'eink t))
+
 
 (set-face-attribute 'default nil
                     :family "Source Code Pro"
