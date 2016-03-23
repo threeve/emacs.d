@@ -47,6 +47,14 @@
 
 ;; additional packages
 
+(use-package projectile
+  :ensure t
+  :init (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
+  :config
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
+  (projectile-global-mode))
+
 (use-package mmm-mode
   :ensure t
   :diminish mmm-mode
