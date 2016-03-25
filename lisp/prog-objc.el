@@ -29,12 +29,15 @@
       (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
   )
 
-;; clang-format package depends on features of clang-format not yet
-;; available in the homebrew version
-;; requires installing the llvm --with-clang formula
-;; (use-package clang-format
-;;   :ensure t)
-
+(use-package clang-format
+  :ensure t
+  :commands (clang-format-region clang-format-buffer)
+  :init
+  (evil-define-key 'normal objc-mode-map "g =" #'clang-format-region)
+  ;; nice idea but too aggressive
+  ;; (add-hook 'objc-mode-hook
+  ;;           (lambda () (add-hook 'before-save-hook #'clang-format-buffer)))
+  )
 
 (provide 'prog-objc)
 ;;; prog-objc.el ends here
