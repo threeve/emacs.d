@@ -30,7 +30,8 @@
 
 (use-package pandoc-mode
   :ensure t
-  :config (add-hook 'markdown-mode-hook 'pandoc-mode))
+  :commands pandoc-mode
+  :init (add-hook 'markdown-mode-hook 'pandoc-mode))
 
 (provide 'init-markdown)
 ;; init-markdown.el ends here
