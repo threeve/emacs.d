@@ -72,13 +72,26 @@
 
 (use-package flycheck
   :ensure t
+  :preface
+  (defun jafo/flycheck-mode-line-status-text (&optional status)
+    "Get a text describing STATUS for use in the mode line."
+    (let ((text (pcase (or status flycheck-last-status-change)
+                  (`not-checked "")
+                  (`no-checker "-")
+                  (`running "*")
+                  (`errored "!")
+                  (`finished
+                   (let-alist (flycheck-count-errors flycheck-current-errors)
+                     (if (or .error .warning)
+                         (format "⟨%s∙%s⟩" (or .error 0) (or .warning 0))
+                       "")))
+                  (`interrupted "-")
+                  (`suspicious "?"))))
+      (concat " " flycheck-mode-line-prefix text)))
+  :init
+  (setq flycheck-mode-line-prefix "✓"
+        flycheck-mode-line '(:eval (jafo/flycheck-mode-line-status-text)))
   :config
-  ;; not sure I like this...
-  ;; (use-package flycheck-pos-tip
-  ;;   :ensure t
-  ;;   :config
-  ;;   (eval-after-load 'flycheck
-  ;;     '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
   (setq flycheck-display-errors-delay 0.4
         flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
   (add-hook 'after-init-hook #'global-flycheck-mode))
