@@ -20,8 +20,8 @@
 
 (use-package markdown-mode
   :ensure t
-  :mode (("\\.md$" . gfm-mode)
-         ("\\.markdown$" . gfm-mode))
+  :mode (("\\.md$" . markdown-mode)
+         ("\\.markdown$" . markdown-mode))
   :config
   (put 'gfm-mode
        'flyspell-mode-predicate #'jafo/flyspell-ignore-fenced-code-blocks)
