@@ -57,6 +57,15 @@
     (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
   (projectile-global-mode))
 
+(use-package ag
+  :ensure t
+  :config
+  (setq ag-highlight-search t
+        ag-reuse-buffers t))
+
+(use-package wgrep-ag
+  :ensure t)
+
 (use-package mmm-mode
   :ensure t
   :diminish mmm-mode
