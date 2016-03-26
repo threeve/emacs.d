@@ -17,7 +17,11 @@
               )
   :config
   (use-package evil-magit :ensure t)
-  (setq magit-completing-read-function #'magit-ido-completing-read))
+  ;; align toggled magit sections to top of screen
+  (defadvice magit-section-toggle (after scroll-line-to-top () activate)
+    (recenter 0))
+  (setq magit-completing-read-function #'magit-ido-completing-read
+        magit-diff-refine-hunk t))
 
 (use-package diff-hl
   :ensure t
