@@ -23,5 +23,19 @@
   :ensure t
   :config (global-diff-hl-mode))
 
+(use-package git-messenger
+  :ensure t
+  :bind (:map evil-normal-state-map
+              ("<SPC> g m" . git-messenger:popup-message)))
+
+(use-package git-timemachine
+  :ensure t
+  :bind (:map evil-normal-state-map
+              ("<SPC> g t" . git-timemachine))
+  :config
+  ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
+  (evil-make-overriding-map git-timemachine-mode-map 'normal)
+  (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
+
 (provide 'init-scm)
 ;;; init-scm.el ends here
