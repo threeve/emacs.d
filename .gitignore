@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/emacs
 
+# tangled org config file
+config.el
+
 ### Emacs ###
 # -*- mode: gitignore; -*-
 *~

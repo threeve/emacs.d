@@ -1,0 +1,9 @@
+
+* Personal Info
+
+#+BEGIN_SRC emacs-lisp
+
+(setq user-full-name "Jason Foreman"
+      user-mail-address "jason@threeve.org")
+
+#+END_SRC
