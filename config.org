@@ -7,3 +7,31 @@
       user-mail-address "jason@threeve.org")
 
 #+END_SRC
+
+* Basic config
+
+** use-package
+
+#+BEGIN_SRC emacs-lisp
+
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (eval-when-compile
+    (require 'use-package))
+  (require 'diminish)
+  (require 'bind-key)
+
+#+END_SRC
+
+** custom
+
+Use a custom file outside of our normal init.el.
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
+
+#+END_SRC
