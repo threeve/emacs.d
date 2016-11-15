@@ -10,6 +10,18 @@
 
 * Basic config
 
+** compatibility bullshit
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; temp fix for which-key in emacs 26 (master)
+  (when (version<= "26.0" emacs-version)
+    (defalias 'display-buffer-in-major-side-window 'window--make-major-side-window))
+
+  (setq inhibit-default-init t)
+
+#+END_SRC
+
 ** use-package
 
 #+BEGIN_SRC emacs-lisp
@@ -65,22 +77,28 @@ key be meta, and option stays option.
 
 #+BEGIN_SRC emacs-lisp
 
-  (setq
-   indicate-empty-lines t
-   inhibit-startup-screen t
-   initial-scratch-message nil
-   mouse-wheel-scroll-amount '(1 ((shift) . 5))
-   ring-bell-function 'ignore
-   scroll-conservatively 10000
-   scroll-preserve-screen-position t
-   use-dialog-box nil)
+    (setq
+     gnutls-min-prime-bits 4096             ; default is dangerously low...
+     indicate-empty-lines t
+     inhibit-startup-screen t
+     initial-scratch-message nil
+     make-backup-files nil
+     mouse-wheel-scroll-amount '(1 ((shift) . 5))
+     ring-bell-function 'ignore
+     scroll-conservatively 10000
+     scroll-preserve-screen-position t
+     tls-program '("gnutls-cli --x509cafile %t -p %p %h"
+                   "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
+     use-dialog-box nil)
 
-  (fset 'yes-or-no-p 'y-or-n-p)
+    (setq-default cursor-in-non-selected-windows nil)
+
+    (fset 'yes-or-no-p #'y-or-n-p)
 
 #+END_SRC
 
 * UI
-  
+
 ** Theme
 
 #+BEGIN_SRC emacs-lisp
@@ -90,17 +108,17 @@ key be meta, and option stays option.
     :ensure t
     :config (load-theme 'noctilux t))
 
-  (use-package eink-theme
-    :disabled t
-    :ensure t
-    :config (load-theme 'eink t))
-
   (use-package apropospriate-theme
     :ensure t
-    :config (load-theme 'apropospriate-light t))
+    :config (load-theme 'apropospriate-dark t))
+
+  (use-package lightning-theme
+    :disabled t
+    :load-path "~/Source/lightning-theme"
+    :config (load-theme 'lightning t))
 
 #+END_SRC
-   
+
 ** Fonts
 
 I like Adobe's Source family of fonts for both fixed-width and variable.
@@ -110,13 +128,13 @@ I like Adobe's Source family of fonts for both fixed-width and variable.
   (prefer-coding-system 'utf-8-unix)
 
   (set-face-attribute 'default nil
-                      :family "Source Code Pro"
+                      :family "Hasklig"
                       :height 120
                       :weight 'normal)
 
   (set-face-attribute 'variable-pitch nil
                       :family "Iowan Old Style"
-                      :height 140
+                      :height 120
                       :weight 'normal)
 
 #+END_SRC
@@ -126,22 +144,26 @@ private-use characters to render nicely.
 
 #+BEGIN_SRC emacs-lisp
 
-  ;; make emoji work, e.g. burrito: 🌯
-  (set-fontset-font t 'symbol
-                    (font-spec :family "Apple Color Emoji")
-                    nil 'prepend)
+  ;; (defun jafo:configure-fonts (frame)
+  ;;   "Set up nice fonts for FRAME."
 
-  ;; devicons private use area, e.g. React logo: 
-  ;; http://vorillaz.github.io/devicons/#/main
-  (set-fontset-font t '(#xe600 . #xe6ff)
-                    (font-spec :family "icomoon")
-                    nil 'prepend)
+    ;; devicons private use area, e.g. React logo: 
+    ;; http://vorillaz.github.io/devicons/#/main
+    (set-fontset-font t '(#xe600 . #xe6ff)
+                      (font-spec :family "icomoon")
+                      nil 'prepend)
 
-  ;; FontAwesome private use area, e.g. Empire logo: 
-  ;; https://fortawesome.github.io/Font-Awesome/
-  (set-fontset-font t '(#xf000 . #xf3ff)
-                    (font-spec :family "FontAwesome")
-                    nil 'prepend)
+    ;; FontAwesome private use area, e.g. Empire logo: 
+    ;; https://fortawesome.github.io/Font-Awesome/
+    (set-fontset-font t '(#xf000 . #xf3ff)
+                      (font-spec :family "FontAwesome")
+                      nil 'prepend)
+
+  ;; (let (frame (selected-frame))
+  ;;   (if frame
+  ;;       (jafo:configure-fonts frame)))
+
+  ;; (add-hook 'after-make-frame-functions #'jafo:configure-fonts)
 
 #+END_SRC
 
@@ -149,17 +171,45 @@ private-use characters to render nicely.
 
 #+BEGIN_SRC emacs-lisp
 
-  (fringe-mode '(nil . 0))
+  ;; (fringe-mode '(nil . 0))
   (global-hl-line-mode t)
-  (global-prettify-symbols-mode t)
   (global-visual-line-mode 0)
   (line-number-mode 0)
   (scroll-bar-mode 0)
   (show-paren-mode t)
   (tool-bar-mode 0)
 
+  (setq prettify-symbols-unprettify-at-point 'right-edge)
+  (global-prettify-symbols-mode t)
+
+  (use-package smart-mode-line
+    :disabled t
+    :ensure t
+    :config
+    (setq sml/theme 'respectful)
+    (sml/setup))
+
 #+END_SRC
-   
+
+** mode line
+
+tinkering...
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; (setq-default mode-line-format
+  ;;               '("%e"
+  ;;                 mode-line-frame-identification
+  ;;                 mode-line-buffer-identification
+  ;;                 "\ue625"
+  ;;                 (vc-mode vc-mode)
+  ;;                 "\t"
+  ;;                 mode-line-modes
+  ;;                 mode-line-end-spaces
+  ;;                 ))
+
+#+END_SRC
+
 ** Text scaling
 
 Add text scaling similar to what is found in other Mac apps.
@@ -184,7 +234,7 @@ dock and menu bar this gives Emacs a lot of space to breath.
 
 #+BEGIN_SRC emacs-lisp
 
-(add-hook 'emacs-startup-hook #'toggle-frame-fullscreen)
+;;(add-hook 'emacs-startup-hook #'toggle-frame-fullscreen)
 
 #+END_SRC
 
@@ -196,15 +246,19 @@ The which-key package is a nice visual guide through available key bindings.
 
   (use-package which-key
     :ensure t
+    :bind ("C-h C-k" . which-key-show-top-level)
+    :demand t
     :diminish ""
     :config
-    (setq which-key-idle-delay 0.3
+    (setq which-key-idle-delay 0.2
           which-key-add-column-padding 0)
     (which-key-declare-prefixes
-      "<SPC> g" '("git/scm" . "Magit, git, scm commands")
+      "<SPC> g" '("scm" . "Magit, git, scm commands")
       "<SPC> p" '("projectile" . "Projectile commands")
       "<SPC> d" '("deft" . "notes: deft, etc")
       "<SPC> o" '("org" . "org mode")
+      "<SPC> u" "package"
+      "<SPC> n" "narrow"
       )
     (which-key-mode t))
 
@@ -237,6 +291,29 @@ Show a vertical line at the fill column.
 
 #+END_SRC
 
+** Disable the mouse
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package disable-mouse
+    :ensure t
+    :diminish global-disable-mouse-mode
+    :config (global-disable-mouse-mode))
+
+#+END_SRC
+
+** misc
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package rainbow-delimiters
+    :ensure t
+    :commands rainbow-delimiters-mode
+    :init
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
+#+END_SRC
+
 * Evil
 
 #+BEGIN_SRC emacs-lisp
@@ -252,9 +329,11 @@ Show a vertical line at the fill column.
            :map evil-normal-state-map
                 ("[ q" . previous-error)
                 ("] q" . next-error)
-                ("-" . dired-jump))
+                ("-" . dired-jump)
+           :map evil-insert-state-map
+                ("M-/" . hippie-expand))
     :init
-    (setq evil-mode-line-format '(before . mode-line-front-space)
+    (setq evil-mode-line-format '(before . mode-line-frame-identification)
           evil-want-C-w-in-emacs-state t
           evil-want-Y-yank-to-eol t
           evil-visual-state-cursor 'hollow)
@@ -273,18 +352,68 @@ Show a vertical line at the fill column.
     (evil-define-key 'normal dired-mode-map "-" 'dired-up-directory)
     (evil-mode t))
 
+  (use-package evil-ediff
+    :disabled t
+    :ensure t)
+
+  (use-package evil-iedit-state
+    :disabled t
+    :ensure t)
+
 #+END_SRC
+
 * Utilities
+
+** meh
+#+BEGIN_SRC emacs-lisp
+
+  (use-package discover-my-major
+    :ensure t
+    :bind ("C-h C-m" . discover-my-major)
+    :config
+    (with-eval-after-load 'evil
+      (evil-set-initial-state 'makey-key-mode 'motion)))
+
+#+END_SRC
+
+** dired
+
+#+BEGIN_SRC emacs-lisp
+
+  (when (executable-find "gls")
+    (setq insert-directory-program "gls"
+          dired-listing-switches "-lFAGh1v"
+          dired-use-ls-dired t))
+
+#+END_SRC
+
+** pdf tools
+
+#+BEGIN_SRC 
+
+#+END_SRC
+
 ** Projectile
 
  #+BEGIN_SRC emacs-lisp
 
+   (defun jafo:projectile-test-suffix (project-type)
+     (cond
+      ((eq project-type 'generic) "Tests")
+      ((projectile-test-suffix project-type))))
+
    (use-package projectile
      :ensure t
-     :init (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
+     :init 
+     (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
      :config
+     (setq projectile-test-suffix-function #'jafo:projectile-test-suffix)
+     ;; "<SPC> p s s" is lame, this is better
+     (define-key projectile-command-map (kbd "/") #'projectile-ag)
      (with-eval-after-load 'evil
        (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
+     (with-eval-after-load 'ivy
+       (setq projectile-completion-system 'ivy))
      (projectile-global-mode))
 
  #+END_SRC
@@ -295,6 +424,7 @@ Show a vertical line at the fill column.
 
   (use-package flycheck
     :ensure t
+    :pin melpa-stable
     :preface
     (defun jafo/flycheck-mode-line-status-text (&optional status)
       "Get a text describing STATUS for use in the mode line."
@@ -315,9 +445,14 @@ Show a vertical line at the fill column.
     (setq flycheck-mode-line-prefix "✓"
           flycheck-mode-line '(:eval (jafo/flycheck-mode-line-status-text)))
     :config
-    (setq flycheck-display-errors-delay 0.4
+    (setq flycheck-display-errors-delay 0.5
           flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
     (add-hook 'after-init-hook #'global-flycheck-mode))
+
+  (use-package flycheck-package
+    :ensure t
+    :after flycheck
+    :config (flycheck-package-setup))
 
 #+END_SRC
 
@@ -334,8 +469,21 @@ Show a vertical line at the fill column.
     (define-key company-active-map (kbd "C-p") #'company-select-previous)
     (define-key company-active-map (kbd "C-k") #'company-select-previous)
     (setq company-idle-delay 0.2
+          company-dabbrev-downcase nil    ; pretty sure company has a bug in the default
+          company-require-match nil
+          company-selection-wrap-around t
           company-tooltip-align-annotations t)
     (global-company-mode t))
+
+  (use-package company-quickhelp
+    :ensure t
+    :after company
+    :config (company-quickhelp-mode t))
+
+  (use-package company-emoji
+    :ensure t
+    :after company
+    :config (add-to-list 'company-backends #'company-emoji))
 
 #+END_SRC
 
@@ -362,10 +510,14 @@ Show a vertical line at the fill column.
     :init
     (define-key evil-normal-state-map (kbd "<SPC> u p") 'paradox-list-packages)
     (define-key evil-normal-state-map (kbd "<SPC> u P") 'package-list-packages-no-fetch)
-    (evil-set-initial-state 'paradox-menu-mode 'motion)
+    ;; (evil-add-hjkl-bindings paradox-menu-mode-map 'emacs)
     :config
-    (setq paradox-display-download-count t
-          paradox-execute-asynchronously nil
+    (evil-set-initial-state 'paradox-menu-mode 'motion)
+    (evil-make-overriding-map paradox-menu-mode-map 'motion)
+    (add-hook 'paradox-menu-mode-hook #'evil-normalize-keymaps)
+    (setq paradox-display-download-count nil
+          paradox-display-star-count nil
+          paradox-execute-asynchronously t
           paradox-hide-wiki-packages t
           paradox-use-homepage-buttons nil))
 
@@ -390,15 +542,15 @@ This is a quick and fun way to jump around to visible areas of the window.
 
  #+BEGIN_SRC emacs-lisp
 
-   (setq ido-enable-flex-matching t
+   (setq ido-create-new-buffer 'always
+         ido-enable-flex-matching t
          ido-use-faces nil)
-   (ido-mode t)
-   (ido-everywhere t)
-   (setq ido-create-new-buffer 'always)
+   ;; (ido-mode t)
+   ;; (ido-everywhere t)
 
-   (use-package ido-ubiquitous
-     :ensure t
-     :config (ido-ubiquitous-mode t))
+   ;; (use-package ido-ubiquitous
+   ;;   :ensure t
+   ;;   :config (ido-ubiquitous-mode t))
 
  #+END_SRC
 
@@ -407,8 +559,8 @@ This is a quick and fun way to jump around to visible areas of the window.
  #+BEGIN_SRC emacs-lisp
 
    (use-package flx-ido
-     :ensure t
-     :config (flx-ido-mode t))
+     :ensure t)
+   ;;   :config (flx-ido-mode t))
 
  #+END_SRC
 
@@ -416,17 +568,17 @@ This is a quick and fun way to jump around to visible areas of the window.
 
  #+BEGIN_SRC emacs-lisp
 
-   (use-package ido-vertical-mode
-     :ensure t
-     :init
-     (setq ido-vertical-indicator "─►")
-     :config
-     (defun jafo/ido-setup-hook ()
-       (define-key ido-completion-map (kbd "C-j") 'ido-next-match)
-       (define-key ido-completion-map (kbd "C-k") 'ido-prev-match))
-     (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
-     (setq ido-vertical-define-keys 'C-n-and-C-p-only)
-     (ido-vertical-mode t))
+   ;; (use-package ido-vertical-mode
+   ;;   :ensure t
+   ;;   :init
+   ;;   (setq ido-vertical-indicator "─►")
+   ;;   :config
+   ;;   (defun jafo/ido-setup-hook ()
+   ;;     (define-key ido-completion-map (kbd "C-j") 'ido-next-match)
+   ;;     (define-key ido-completion-map (kbd "C-k") 'ido-prev-match))
+   ;;   (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
+   ;;   (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+   ;;   (ido-vertical-mode t))
 
  #+END_SRC
 
@@ -456,6 +608,36 @@ This is a quick and fun way to jump around to visible areas of the window.
 
  #+END_SRC
 
+** swiper
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package swiper
+    :ensure t
+    :demand t
+    :bind (:map ivy-minibuffer-map
+                ("C-j" . ivy-next-line)
+                ("C-k" . ivy-previous-line))
+    :config
+    (setq ivy-use-virtual-buffers t
+          ivy-count-format ""
+          ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+    (ivy-mode t))
+
+  (use-package counsel
+    :ensure t
+    :config
+    (global-set-key (kbd "M-x") #'counsel-M-x)
+    (global-set-key (kbd "C-x C-f") #'counsel-find-file)
+    (global-set-key (kbd "C-h f") #'counsel-describe-function)
+    (global-set-key (kbd "C-h v") #'counsel-describe-variable)
+    )
+
+  (use-package counsel-projectile
+    :ensure t)
+
+#+END_SRC
+
 ** Ag
 
 Search with ag, which integrates nicely with projectile.
@@ -479,8 +661,118 @@ And use ag with wgrep, for editing ag results directly.
 
 #+END_SRC
 
-* Org
+** Rest client
+
+Rest client allows http debugging in emacs.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package restclient
+    :ensure t
+    :mode (("\\.http$" . restclient-mode)))
   
+#+END_SRC
+
+
+Add autocompletion for http headers.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company-restclient
+    :ensure t
+    :after restclient
+    :config
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends #'company-restclient)))
+
+#+END_SRC
+
+** volatile highlights
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package volatile-highlights
+    :ensure t
+    :config
+    (vhl/define-extension 'evil 'evil-paste-after 'evil-paste-before
+                          'evil-paste-pop 'evil-move)
+    (vhl/install-extension 'evil)
+    (volatile-highlights-mode t))
+
+#+END_SRC
+
+** ranger
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ranger
+    :disabled t
+    :ensure t)
+
+#+END_SRC
+
+** jenkins
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package jenkins
+    :ensure t
+    :config
+    ;; TODO: token belongs in secure storage
+    (setq jenkins-api-token "2afaaaee908667f3c0e032ef124f4db5"
+          jenkins-colwidth-name 60
+          jenkins-url "https://feedsdk.ci.data.com/"
+          jeknins-username "jforeman"))
+
+#+END_SRC
+
+** osx trash
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package osx-trash
+    :ensure t
+    :config (osx-trash-setup))
+
+#+END_SRC
+
+** multiple-cursors
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package multiple-cursors
+    :ensure t
+    :disabled t                           ; interacts poorly with evil
+    :bind ("C->" . mc/mark-next-like-this))
+
+#+END_SRC
+
+** plantuml
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package plantuml-mode
+    :ensure t
+    :mode ("\\.puml$" . plantuml-mode)
+    :init
+    (setq plantuml-jar-path "/usr/local/Cellar/plantuml/8048/plantuml.8048.jar"))
+
+#+END_SRC
+
+** dash
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package dash-at-point
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> d d" . dash-at-point)
+                ("<SPC> d D" . dash-at-point-with-docset)))
+
+#+END_SRC
+
+* Org
+
 ** base org mode config
 
 The org-plus-contrib package from the org package repository includes
@@ -488,47 +780,55 @@ a lot of handy stuff from org-contrib by default.
 
 #+BEGIN_SRC emacs-lisp
 
-(use-package org-plus-contrib
-  :ensure t
-  :pin org
-  :mode ("\\.org$" . org-mode)
-  :bind (:map evil-normal-state-map
-              ("<SPC> o a" . org-agenda)
-              ("<SPC> o b" . org-ido-switchb)
-              ("<SPC> o c" . org-capture)
-              ("<SPC> o l" . org-store-link)
-         :map evil-motion-state-map
-              ("[ [" . org-previous-visible-heading)
-              ("] ]" . org-next-visible-heading))
-  :init
-  (setq org-agenda-files '("~/Documents/gtd.org")
-        org-agenda-repeating-timestamp-show-all t
-        org-agenda-restore-windows-after-quit t
-        org-agenda-skip-deadline-if-done t
-        org-agenda-skip-scheduled-if-done t
-        org-agenda-start-on-weekday nil
-        org-completion-use-ido t
-        org-deadline-warning-days 3
-        org-default-notes-file "~/Documents/gtd.org"
-        org-enforce-todo-dependencies t
-        org-export-with-toc nil
-        org-log-done t
-        org-log-into-drawer t
-        org-outline-path-complete-in-steps nil
-        org-refile-allow-creating-parent-nodes 'confirm
-        org-refile-targets '((nil :maxlevel . 9)
-                             (org-agenda-files :maxlevel . 9))
-        org-refile-use-outline-path t
-        org-return-follows-link t)
-  :config
-  (org-add-agenda-custom-command
-   '("d" "Deadlines and scheduled work" alltodo ""
-     ((org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
-      (org-agenda-prefix-format '((todo . " %i %-22(org-entry-get nil \"DEADLINE\") %-12:c %s")))
-      (org-agenda-sorting-strategy '(deadline-up)))))
-  (use-package org-checklist)
-  (use-package org-mime)
-  (use-package org-secretary))
+  (use-package org-plus-contrib
+    :ensure t
+    :pin org
+    :mode ("\\.org$" . org-mode)
+    :bind (:map evil-normal-state-map
+                ("<SPC> o a" . org-agenda)
+                ("<SPC> o b" . org-ido-switchb)
+                ("<SPC> o c" . org-capture)
+                ("<SPC> o l" . org-store-link)
+           :map evil-motion-state-map
+                ("[ [" . org-previous-visible-heading)
+                ("] ]" . org-next-visible-heading))
+    :init
+    (setq org-agenda-files '("~/Documents/gtd.org")
+          org-agenda-repeating-timestamp-show-all t
+          org-agenda-restore-windows-after-quit t
+          org-agenda-skip-deadline-if-done t
+          org-agenda-skip-scheduled-if-done t
+          org-agenda-start-on-weekday nil
+          org-completion-use-ido t
+          org-deadline-warning-days 3
+          org-default-notes-file "~/Documents/gtd.org"
+          org-ellipsis " …"
+          org-enforce-todo-dependencies t
+          org-export-with-toc nil
+          org-log-done t
+          org-log-into-drawer t
+          org-outline-path-complete-in-steps nil
+          org-refile-allow-creating-parent-nodes 'confirm
+          org-refile-targets '((nil :maxlevel . 9)
+                               (org-agenda-files :maxlevel . 9))
+          org-refile-use-outline-path t
+          org-return-follows-link t
+          org-startup-indented t)
+    ;; embiggen org headers
+    (set-face-attribute 'org-level-1 nil :height 1.6 :weight 'semi-bold)
+    (set-face-attribute 'org-level-2 nil :height 1.4 :weight 'semi-bold)
+    (set-face-attribute 'org-level-3 nil :height 1.2)
+    (set-face-attribute 'org-level-4 nil :height 1.1)
+    (set-face-attribute 'org-block nil :foreground nil) ; org 9... seems a bug in apropospriate
+    :config
+    (org-add-agenda-custom-command
+     '("d" "Deadlines and scheduled work" alltodo ""
+       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
+        (org-agenda-prefix-format '((todo . " %i %-22(org-entry-get nil \"DEADLINE\") %-12:c %s")))
+        (org-agenda-sorting-strategy '(deadline-up)))))
+    (use-package org-checklist)
+    (use-package org-mime)
+    (use-package org-secretary))
 
 #+END_SRC
 
@@ -574,6 +874,19 @@ Integrate org mode and projectile
 
 * Scm
 
+#+BEGIN_SRC emacs-lisp
+
+  (setq vc-handled-backends '(svn git hg))
+
+  ;; TODO: figure this out with gh:e
+  (use-package browse-at-remote
+    :ensure t
+    :commands browse-at-remote
+    :bind (:map evil-normal-state-map
+                ("<SPC> g g" . browse-at-remote)))
+
+#+END_SRC
+
 ** Magit
 
 The best way to use git.
@@ -591,10 +904,25 @@ The best way to use git.
                 )
     :config
     (use-package evil-magit :ensure t)
+    (use-package magithub :ensure t)
     ;; align toggled magit sections to top of screen
-    (defadvice magit-section-toggle (after scroll-line-to-top () activate)
-      (recenter 0))
+    ;; (defadvice magit-section-toggle (after scroll-line-to-top () activate)
+    ;;   (recenter 0))
+    (magit-define-popup-switch 'magit-log-popup
+      ?m "Omit merge commits" "--no-merges")
     (setq magit-completing-read-function #'magit-ido-completing-read))
+
+  (use-package magit-find-file
+    :ensure t
+    :after magit
+    :config
+    (with-eval-after-load 'projectile
+      (defadvice projectile-current-project-files (around jafo/pcpf activate)
+        "Use magit-find-file-files which is faster."
+        (if (and (boundp #'magit-find-file-files)
+                 (magit-git-repo-p (projectile-project-root)))
+            (setq ad-return-value (magit-find-file-files))
+          ad-do-it))))
 
 #+END_SRC
 
@@ -621,10 +949,16 @@ Show a popup with the commit message at point.
 
 #+BEGIN_SRC emacs-lisp
 
+  (defun jafo/git-popup ()
+    (interactive)
+    (let ((current-prefix-arg '(4)))
+      (git-messenger:popup-message)))
+
   (use-package git-messenger
     :ensure t
     :bind (:map evil-normal-state-map
-                ("<SPC> g m" . git-messenger:popup-message)))
+                ("<SPC> g m" . git-messenger:popup-message)
+                ("<SPC> g M" . jafo/git-popup)))
 
 #+END_SRC
 
@@ -650,6 +984,15 @@ Diffhl will indicated changed hunks in the fringe.
 
 #+END_SRC
 
+** gist
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package gist
+    :ensure t)
+
+#+END_SRC
+
 * Writing and Editing
 
 ** Basic text settings
@@ -660,9 +1003,19 @@ Diffhl will indicated changed hunks in the fringe.
   (global-auto-revert-mode t)             ; automatically read changed files
 
   (setq-default indent-tabs-mode nil)     ; use spaces by default
-  (setq require-final-newline t)          ; always end files with a newline
+  (setq require-final-newline t           ; always end files with a newline
+        sentence-end-double-space nil)
 
   (add-hook 'text-mode-hook #'turn-on-auto-fill)
+
+  (use-package ws-butler
+    :ensure t
+    :diminish ""
+    :commands ws-butler-mode
+    :init
+    (add-hook 'prog-mode-hook #'ws-butler-mode)
+    (add-hook 'text-mode-hook #'ws-butler-mode)
+    (add-hook 'org-mode-hook #'ws-butler-mode))
 
 #+END_SRC
 
@@ -682,6 +1035,17 @@ Re-enable narrowing, and use fancy "in-place" narrowing.
                 ("<SPC> n n" . fancy-narrow-to-region)
            :map evil-normal-state-map
                 ("<SPC> n w" . fancy-widen)))
+
+#+END_SRC
+
+** expand region
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package expand-region
+    :ensure t
+    :bind (:map evil-motion-state-map
+                ("C-=" . er/expand-region)))
 
 #+END_SRC
 
@@ -733,6 +1097,11 @@ Enable flyspell to do spellchecking automatically.
     :mode (("\\.md$" . markdown-mode)
            ("\\.markdown$" . markdown-mode))
     :config
+    ;; embiggen headers 
+    (set-face-attribute 'markdown-header-face-1 nil :height 1.6)
+    (set-face-attribute 'markdown-header-face-2 nil :height 1.4)
+    (set-face-attribute 'markdown-header-face-3 nil :height 1.2)
+    (set-face-attribute 'markdown-header-face-4 nil :height 1.1)
     (put 'gfm-mode
          'flyspell-mode-predicate #'jafo/flyspell-ignore-fenced-code-blocks)
     (put 'markdown-mode
@@ -751,9 +1120,140 @@ Enable flyspell to do spellchecking automatically.
 
 #+END_SRC
 
+** string-edit
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; TODO this needs a keybinding
+  (use-package string-edit
+    :ensure t
+    :commands string-edit-at-point)
+
+#+END_SRC
+
+* Mail and News
+
+ #+BEGIN_SRC emacs-lisp
+
+   (use-package gnus
+     :commands (gnus gnus-other-frame)
+     :init
+     (setq gnus-select-method '(nnnil "")
+           gnus-secondary-select-methods
+           '((nntp "news.gmane.org")
+             (nntp "news.gwene.org")))
+     (setq gnus-home-directory "~/Messages/Gnus"
+           message-directory "~/Messages/Gnus/Mail"
+           nnfolder-directory "~/Messages/Gnus/Mail/archive")
+     (setq message-kill-buffer-on-exit t
+           gnus-thread-sort-functions '(gnus-thread-sort-by-number
+                                        gnus-thread-sort-by-date)
+           gnus-treat-x-pgp-sig 'head
+           gnus-treat-body-boundary nil
+           gnus-completing-read-function #'gnus-ido-completing-read
+           gnus-gcc-mark-as-read t
+           gnus-inhibit-startup-message t
+           gnus-interactive-exit 'quiet
+           gnus-check-new-newsgroups nil
+           gnus-large-newsgroup 1000
+           gnus-save-newsrc-file nil
+           gnus-treat-from-gravatar 'head)
+     (setq mm-inline-large-images t
+           mm-text-html-inline-with-images t
+           mm-inline-text-html-with-images t)
+     (with-eval-after-load 'mm-decode
+       (add-to-list 'mm-attachment-override-types "image/*"))
+     (setq gnus-summary-line-format "%U%R%z %(%&user-date;  %-30,30f %*%B%s%)\n"
+           gnus-user-date-format-alist '((t . "%Y-%m-%d %H:%M"))
+           gnus-group-line-format "%S%p%P%M%5y:%B %G\n"
+           gnus-topic-line-format "%i[ %(%{%n%}%) - %A ] %v\n"
+           gnus-sum-thread-tree-false-root ""
+           gnus-sum-thread-tree-indent "  "
+           gnus-sum-thread-tree-leaf-with-other "├─► "
+           gnus-sum-thread-tree-root ""
+           gnus-sum-thread-tree-single-leaf "└─► "
+           gnus-sum-thread-tree-vertical "│")
+     :config
+     (add-hook 'gnus-group-mode-hook #'gnus-topic-mode)
+
+     )
+
+ #+END_SRC
+
 * Programming
 
+** regex builder
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package re-builder
+    :config
+    (setq reb-re-syntax 'string))
+
+#+END_SRC
+
+** Bug reference mode
+
+Use .dir-locals.el to set bug-reference-bug-regexp as needed.
+
+#+BEGIN_SRC emacs-lisp
+
+  (add-hook 'text-mode-hook #'bug-reference-mode)
+  (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+
+#+END_SRC
+
+** compilation
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq compilation-read-command nil
+        compilation-scroll-output 'first-error)
+
+  (require 'ansi-color)
+  (defun jafo:colorize-compilation-buffer ()
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region compilation-filter-start (point))))
+  (add-hook 'compilation-filter-hook #'jafo:colorize-compilation-buffer)
+
+
+  (with-eval-after-load 'compile
+    (add-to-list 'compilation-error-regexp-alist 'xcpretty)
+    (add-to-list 'compilation-error-regexp-alist-alist
+                 '(xcpretty
+                   "^\\(?:\\(\u26a0\ufe0f\\|\\[!\\]\\)\\|\\(?:\u274c\\|\\[x\\]\\)\\)\\s-+\\([^:]+?\\):\\([0-9]+\\):\\([0-9]+\\): .*"
+                   2 3 4 nil 2)))
+
+#+END_SRC
+
 ** c/c++/objc
+
+*** cc-mode dev
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package cc-mode
+    :load-path "~/Source/cc-mode")
+
+#+END_SRC
+
+*** default settings
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq c-basic-offset 4)
+
+  ;; treat .mm files as objc. alas there is no objc++-mode (yet)
+  (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
+
+  ;; try to detect objc headers automatically
+  ;; (add-to-list 'magic-mode-alist
+  ;;              `(,(lambda ()
+  ;;                   (and (string= (file-name-extension buffer-file-name) "h")
+  ;;                        (re-search-forward "@\\(?:\\<interface\\>\\|\\<protocol\\>\\)" magic-mode-regexp-match-limit t)))
+  ;;                . objc-mode))
+
+#+END_SRC
 
 *** clang-format
 
@@ -765,10 +1265,152 @@ Requires that =clang-format= be installed via brew or other method.
     :ensure t
     :commands (clang-format-region clang-format-buffer)
     :init
-    (evil-define-key 'visual objc-mode-map (kbd "g =") #'clang-format-region)
-    (evil-define-key 'normal objc-mode-map (kbd "g =") #'clang-format-buffer))
+    (evil-define-key 'visual c-mode-base-map (kbd "g =") #'clang-format-region)
+    (evil-define-key 'normal c-mode-base-map (kbd "g =") #'clang-format-buffer))
+
+#+END_SRC
+
+*** rtags
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package rtags
+    :load-path "/usr/local/share/emacs/site-lisp/rtags"
+    :config
+    (require 'flycheck-rtags)
+    (setq rtags-autostart-diagnostics t
+          rtags-completions-enabled t)
+    (rtags-enable-standard-keybindings)
+    (rtags-diagnostics)
+    (with-eval-after-load 'company
+      (push 'company-rtags company-backends)))
+
+#+END_SRC
+
+*** irony
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package irony
+    :ensure t
+    :commands irony-mode
+    :init
+    (add-hook 'objc-mode-hook #'irony-mode)
+    (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
+    :config
+    (use-package company-irony
+      :ensure t
+      :after company
+      :config
+      (add-to-list 'company-backends #'company-irony)))
+
+#+END_SRC
+
+*** cmake
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package cmake-mode
+    :ensure t)
+
+#+END_SRC
+
+** c#
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package omnisharp
+    ;; :ensure t
+    :load-path "~/Source/omnisharp-emacs"
+    :commands omnisharp-mode
+    :init
+    (add-hook 'csharp-mode-hook #'omnisharp-mode)
+    :config
+    (add-to-list 'company-backends 'company-omnisharp)
+    (setq omnisharp-server-executable-path "~/Source/omnisharp-roslyn/artifacts/publish/OmniSharp/default/netcoreapp1.0/OmniSharp"))
+
+#+END_SRC
+
+** java/android
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package android-mode
+    :ensure t
+    :config
+    (setq android-mode-builder 'gradle
+          android-mode-sdk-dir "~/Library/Android/sdk/"))
+
+  (use-package ensime
+    :ensure t
+    :pin melpa-stable)
 
 #+END_SRC
 
 ** TODO Swift
 
+** Ansible
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package yaml-mode
+    :ensure t
+    :mode "\\.yml$")
+
+  (use-package company-ansible
+    :ensure t
+    :init
+    (with-eval-after-load company-mode
+      (add-to-list 'company-backends 'company-ansible)))
+    
+  (use-package ansible-doc
+    :ensure t
+    :commands ansible-doc-mode
+    :init (add-hook 'yaml-mode-hook #'ansible-doc-mode))
+
+#+END_SRC
+
+** Djinni
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package djinni-mode
+    :load-path "~/Source/djinni-mode"
+    :config
+    (with-eval-after-load 'flycheck
+      (flycheck-define-checker djinni
+        "A simple syntax checker for djinni IDL files.
+  Requires the `djinni` executable to be in the executable path."
+        :command ("djinni"
+                  "--skip-generation" "true"
+                  "--idl" source-original)
+        :error-patterns
+        ((error line-start (file-name) " (" line "." column "): " (message) line-end))
+        :modes (djinni-mode))
+      (add-to-list 'flycheck-checkers 'djinni 'append)))
+
+#+END_SRC
+
+** jinja
+
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package jinja2-mode
+    :ensure t
+    :mode "\\.jinja\\'"
+    :config
+    (with-eval-after-load 'flycheck
+      (flycheck-define-checker jinja2
+        "A simple syntax checker for jinja2 templates.
+  Requires the `jinja2-syntax` executable to be in the executable path."
+        :command ("jinja2-syntax"
+                  source-original)
+        :error-patterns
+        ((error line-start (file-name) ":" line ": " (message) line-end))
+        :modes (jinja2-mode))
+      (add-to-list 'flycheck-checkers 'jinja2 'append)))
+
+#+END_SRC
+
+*** TODO Set up jinja2 with mmm for multimode goodness
