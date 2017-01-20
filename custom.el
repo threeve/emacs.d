@@ -11,11 +11,19 @@
     ("/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt" "/usr/local/lib/python2.7/site-packages/certifi/cacert.pem")))
  '(package-selected-packages
    (quote
-    (magit-find-file gist counsel-projectile counsel dash-at-point company-emoji string-edit plantuml-mode discover-my-major company-flx highlight-tail atomic-chrome multiple-cursors osx-trash flycheck-package modern-cpp-font-lock jenkins browse-at-remote rainbow-delimiters pdf-tools ws-butler form-feed jinja2-mode ranger smart-mode-line swiper volatile-highlights omnisharp flycheck company-quickhelp expand-region evil-iedit-state evil-iedit cmake-mode company-restclient focus ensime android-mode company-irony irony magithub restclient rest-client disable-mouse ansible-doc yaml-mode company-ansible pandoc-mode markdown-mode wgrep-ag ag fill-column-indicator clang-format projectile darkroom editorconfig ace-jump-mode fancy-narrow diff-hl git-messenger git-timemachine evil-magit idomenu smex ido-vertical-mode flx-ido ido-ubiquitous paradox yasnippet company org-projectile org-agenda-property orgit org-plus-contrib indent-guide which-key evil-quickscope evil-surround evil-commentary evil use-package)))
+    (projectile-ripgrep magit-find-file gist counsel-projectile counsel dash-at-point company-emoji string-edit plantuml-mode discover-my-major company-flx highlight-tail atomic-chrome multiple-cursors osx-trash flycheck-package modern-cpp-font-lock jenkins browse-at-remote rainbow-delimiters pdf-tools ws-butler form-feed jinja2-mode ranger smart-mode-line swiper volatile-highlights omnisharp flycheck company-quickhelp expand-region evil-iedit-state evil-iedit cmake-mode company-restclient focus ensime android-mode company-irony irony magithub restclient rest-client disable-mouse ansible-doc yaml-mode company-ansible pandoc-mode markdown-mode wgrep-ag ag fill-column-indicator clang-format projectile darkroom editorconfig ace-jump-mode fancy-narrow diff-hl git-messenger git-timemachine evil-magit idomenu smex ido-vertical-mode flx-ido ido-ubiquitous paradox yasnippet company org-projectile org-agenda-property orgit org-plus-contrib indent-guide which-key evil-quickscope evil-surround evil-commentary evil use-package)))
  '(paradox-github-token t)
  '(safe-local-variable-values
    (quote
-    ((projectile-project-test-cmd . "./gradlew compileFatDebugUnitTestSources feedsdk:check")
+    ((projectile-globally-unignored-directories "./generated-src" "./generic-layout/djinni/generated-src" "./generic-layout/djinni/generated-src/cpp" "./generic-layout/djinni/generated-src/objc")
+     (projectile-project-compilation-dir . "build")
+     (projectile-project-test-cmd . "make ios.test | xcpretty")
+     (projectile-project-test-cmd . "make ios.unittests | xcpretty")
+     (projectile-project-compilation-cmd . "make ios.build | xcpretty")
+     (projectile-globally-unignored-directories "./generated-src" "./generic-layout/djinni/generated-src/cpp" "./generic-layout/djinni/generated-src/objc")
+     (projectile-globally-unignored-directories "./generated-src" "./generic-layout/djinni/generated-src")
+     (projectile-globally-unignored-directories "./generated-src" "generated-src")
+     (projectile-project-test-cmd . "./gradlew compileFatDebugUnitTestSources feedsdk:check")
      (projectile-project-compilation-cmd . "./gradlew compileFatDebugUnitTestSources feedsdk:check")
      (projectile-project-test-cmd . "gradlew compileFatDebugUnitTestSources feedsdk:check")
      (projectile-project-compilation-cmd . "gradlew compileFatDebugUnitTestSources feedsdk:check")
@@ -48,4 +56,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(indent-guide-face ((t (:foreground "#545454" :slant normal)))))
+ '(indent-guide-face ((t (:foreground "#d3d3d3" :slant normal)))))

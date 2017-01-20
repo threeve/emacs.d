@@ -69,7 +69,15 @@ key be meta, and option stays option.
 #+BEGIN_SRC emacs-lisp
 
   (setq mac-option-modifier 'none
+        mac-command-modifier 'super
         mac-right-command-modifier 'meta)
+
+  (global-set-key (kbd "s-k") #'kill-this-buffer)
+  (global-set-key (kbd "s-s") #'save-buffer)
+  (global-set-key (kbd "s-q") #'save-buffers-kill-terminal)
+
+  (when (fboundp 'mac-auto-operator-composition-mode)
+    (mac-auto-operator-composition-mode t))
 
 #+END_SRC
 
@@ -127,6 +135,7 @@ I like Adobe's Source family of fonts for both fixed-width and variable.
 
   (prefer-coding-system 'utf-8-unix)
 
+  ;; Hasklig is basically Source Code Pro + programming ligatures
   (set-face-attribute 'default nil
                       :family "Hasklig"
                       :height 120
@@ -404,17 +413,23 @@ Show a vertical line at the fill column.
 
    (use-package projectile
      :ensure t
-     :init 
+     :init
      (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
      :config
      (setq projectile-test-suffix-function #'jafo:projectile-test-suffix)
      ;; "<SPC> p s s" is lame, this is better
-     (define-key projectile-command-map (kbd "/") #'projectile-ag)
+     ;; (define-key projectile-command-map (kbd "/") #'projectile-ag)
      (with-eval-after-load 'evil
        (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
-     (with-eval-after-load 'ivy
-       (setq projectile-completion-system 'ivy))
+     ;; (with-eval-after-load 'ivy
+     ;;   (setq projectile-completion-system 'ivy))
      (projectile-global-mode))
+
+   (use-package projectile-ripgrep
+     :ensure t
+     :bind (:map projectile-command-map
+            ("/" . projectile-ripgrep)))
+
 
  #+END_SRC
 
@@ -545,12 +560,12 @@ This is a quick and fun way to jump around to visible areas of the window.
    (setq ido-create-new-buffer 'always
          ido-enable-flex-matching t
          ido-use-faces nil)
-   ;; (ido-mode t)
-   ;; (ido-everywhere t)
+   (ido-mode t)
+   (ido-everywhere t)
 
-   ;; (use-package ido-ubiquitous
-   ;;   :ensure t
-   ;;   :config (ido-ubiquitous-mode t))
+   (use-package ido-ubiquitous
+     :ensure t
+     :config (ido-ubiquitous-mode t))
 
  #+END_SRC
 
@@ -559,8 +574,8 @@ This is a quick and fun way to jump around to visible areas of the window.
  #+BEGIN_SRC emacs-lisp
 
    (use-package flx-ido
-     :ensure t)
-   ;;   :config (flx-ido-mode t))
+     :ensure t
+     :config (flx-ido-mode t))
 
  #+END_SRC
 
@@ -568,17 +583,17 @@ This is a quick and fun way to jump around to visible areas of the window.
 
  #+BEGIN_SRC emacs-lisp
 
-   ;; (use-package ido-vertical-mode
-   ;;   :ensure t
-   ;;   :init
-   ;;   (setq ido-vertical-indicator "─►")
-   ;;   :config
-   ;;   (defun jafo/ido-setup-hook ()
-   ;;     (define-key ido-completion-map (kbd "C-j") 'ido-next-match)
-   ;;     (define-key ido-completion-map (kbd "C-k") 'ido-prev-match))
-   ;;   (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
-   ;;   (setq ido-vertical-define-keys 'C-n-and-C-p-only)
-   ;;   (ido-vertical-mode t))
+   (use-package ido-vertical-mode
+     :ensure t
+     :init
+     (setq ido-vertical-indicator "─►")
+     :config
+     (defun jafo/ido-setup-hook ()
+       (define-key ido-completion-map (kbd "C-j") 'ido-next-match)
+       (define-key ido-completion-map (kbd "C-k") 'ido-prev-match))
+     (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
+     (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+     (ido-vertical-mode t))
 
  #+END_SRC
 
@@ -614,6 +629,7 @@ This is a quick and fun way to jump around to visible areas of the window.
 
   (use-package swiper
     :ensure t
+    :disabled t
     :demand t
     :bind (:map ivy-minibuffer-map
                 ("C-j" . ivy-next-line)
@@ -626,6 +642,7 @@ This is a quick and fun way to jump around to visible areas of the window.
 
   (use-package counsel
     :ensure t
+    :disabled t
     :config
     (global-set-key (kbd "M-x") #'counsel-M-x)
     (global-set-key (kbd "C-x C-f") #'counsel-find-file)
@@ -634,6 +651,7 @@ This is a quick and fun way to jump around to visible areas of the window.
     )
 
   (use-package counsel-projectile
+    :disabled t
     :ensure t)
 
 #+END_SRC
@@ -904,7 +922,7 @@ The best way to use git.
                 )
     :config
     (use-package evil-magit :ensure t)
-    (use-package magithub :ensure t)
+    ;; (use-package magithub :ensure t)
     ;; align toggled magit sections to top of screen
     ;; (defadvice magit-section-toggle (after scroll-line-to-top () activate)
     ;;   (recenter 0))
@@ -913,6 +931,7 @@ The best way to use git.
     (setq magit-completing-read-function #'magit-ido-completing-read))
 
   (use-package magit-find-file
+    :disabled t
     :ensure t
     :after magit
     :config
@@ -1208,7 +1227,7 @@ Use .dir-locals.el to set bug-reference-bug-regexp as needed.
 #+BEGIN_SRC emacs-lisp
 
   (setq compilation-read-command nil
-        compilation-scroll-output 'first-error)
+        compilation-scroll-output 'always)
 
   (require 'ansi-color)
   (defun jafo:colorize-compilation-buffer ()
