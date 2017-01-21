@@ -33,6 +33,47 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+* UI
+
+** Theme
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package apropospriate-theme
+    :ensure t
+    :config (load-theme 'apropospriate-dark t))
+
+#+END_SRC
+
+** Chrome
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq
+   indicate-empty-lines t
+   inhibit-startup-screen t
+   initial-scratch-message nil
+   ring-bell-function 'ignore
+   scroll-conservatively 10000
+   scroll-preserve-screen-position t
+   use-dialog-box nil
+   )
+
+  (setq-default
+   cursor-in-non-selected-windows nil
+   )
+
+  (fset 'yes-or-no-p #'y-or-n-p)
+
+  (global-hl-line-mode t)
+  (global-visual-line-mode 0)
+  (line-number-mode 0)
+  (scroll-bar-mode 0)
+  (show-paren-mode t)
+  (tool-bar-mode 0)
+
+#+END_SRC
+
 * Evil
 
   [[https://github.com/emacs-evil/evil][Evil mode]] is an impressively complete Vim emulation layer for
