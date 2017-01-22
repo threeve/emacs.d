@@ -198,6 +198,24 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Indent Guide
+
+   [[https://github.com/zk-phi/indent-guide][Indent Guide]] draws a vertical line indicator to show the
+   indentation level of the current block. This is useful in
+   programming modes, less so in text modes. It also can require some
+   tweaking to get the face to look right with your theme.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package indent-guide
+    :ensure t
+    :diminish ""
+    :config
+    (setq indent-guide-char "│")
+    (add-hook 'prog-mode-hook #'indent-guide-mode))
+
+#+END_SRC
+
 * Evil
 
   [[https://github.com/emacs-evil/evil][Evil mode]] is an impressively complete Vim emulation layer for
