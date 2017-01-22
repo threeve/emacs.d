@@ -66,6 +66,53 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Fonts
+
+   [[https://github.com/adobe-fonts][Adobe's "Source" family of fonts]] are quite nice, and [[https://github.com/i-tu/Hasklig][Hasklig]] is a
+   derivative of [[https://github.com/adobe-fonts/source-code-pro][Source Code Pro]] that adds many programming
+   ligatures. Use of the ligatures requires using the railwaycat emacs
+   port with mac-auto-operator-composition-mode enabled.
+
+   On macOS these fonts can be installed with [[https://caskroom.github.io][Homebrew Cask]].
+
+#+BEGIN_SRC emacs-lisp
+
+  (prefer-coding-system 'utf-8-unix)
+
+  (set-face-attribute 'default nil
+                      :family "Hasklig"
+                      :height 120
+                      :weight 'normal)
+
+  (set-face-attribute 'variable-pitch nil
+                      :family "Source Sans Pro"
+                      :height 120
+                      :weight 'normal)
+
+#+END_SRC
+
+   Additionally configure some icon fonts that add various programming
+   related glyphs to the private use area:
+
+   - [[http://fontawesome.io][Font Awesome]]
+   - [[http://vorillaz.github.io/devicons/#/main][Devicons]]
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; FontAwesome private use area, e.g. Rebel logo: 
+  ;; https://fortawesome.github.io/Font-Awesome/
+  (set-fontset-font t '(#xf000 . #xf3ff)
+                    (font-spec :family "FontAwesome")
+                    nil 'prepend)
+
+  ;; devicons private use area, e.g. React logo: 
+  ;; http://vorillaz.github.io/devicons/#/main
+  (set-fontset-font t '(#xe600 . #xe6ff)
+                    (font-spec :family "icomoon")
+                    nil 'prepend)
+
+#+END_SRC
+
 ** Chrome
 
 #+BEGIN_SRC emacs-lisp
