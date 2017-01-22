@@ -70,6 +70,46 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Help
+
+   [[https://github.com/justbur/emacs-which-key][Which key]] provides visual guidance on incomplete key chords which
+   aids in discovery.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package which-key
+    :ensure t
+    :demand t
+    :diminish ""
+    :bind ("C-h C-k" . which-key-show-top-level)
+    :config
+    (setq which-key-idle-delay 0.2
+          which-key-add-column-padding 0)
+    (which-key-declare-prefixes
+     "<SPC> g" '("scm" . "Magit, git, scm commands")
+     "<SPC> p" '("projectile" . "Projectile commands")
+     "<SPC> d" '("deft" . "notes: deft, etc")
+     "<SPC> o" '("org" . "org mode")
+     "<SPC> u" "package"
+     "<SPC> n" "narrow"
+     )
+    (which-key-mode t))
+
+#+END_SRC
+
+   [[https://github.com/steckerhalter/discover-my-major][Discover My Major]] displays keybindings for the current major mode.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package discover-my-major
+    :ensure t
+    :bind ("C-h C-m" . discover-my-major)
+    :config
+    (with-eval-after-load 'evil
+      (evil-set-initial-state 'makey-key-mode 'motion)))
+
+#+END_SRC
+
 * UI
 
 ** Theme
