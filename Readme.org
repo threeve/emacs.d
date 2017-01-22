@@ -33,6 +33,27 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Mac keys
+
+   Different distributions of Emacs on macOS have different ideas
+   about what the Command and Option keys should do, so be explicit
+   here to make the consistent.
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq mac-option-modifier 'none
+        mac-command-modifier 'super
+        mac-right-command-modifier 'meta)
+
+  (global-set-key (kbd "s-a") #'mark-whole-buffer)
+  (global-set-key (kbd "s-k") #'kill-this-buffer)
+  (global-set-key (kbd "s-l") #'goto-line)
+  (global-set-key (kbd "s-q") #'save-buffers-kill-terminal)
+  (global-set-key (kbd "s-s") #'save-buffer)
+  (global-set-key (kbd "s-w") #'delete-frame)
+
+#+END_SRC
+
 * UI
 
 ** Theme
