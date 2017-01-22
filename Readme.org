@@ -54,6 +54,22 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+   Add some text scaling bindings similar to other macOS apps.
+
+#+BEGIN_SRC emacs-lisp
+
+  (defun jafo-text-scale-reset ()
+    "Reset text scaling to base size."
+    (interactive)
+    (text-scale-set 0))
+
+  (global-set-key (kbd "s-+") #'text-scale-increase)
+  (global-set-key (kbd "s-=") #'text-scale-increase)
+  (global-set-key (kbd "s--") #'text-scale-decrease)
+  (global-set-key (kbd "s-0") #'jafo-text-scale-reset)
+
+#+END_SRC
+
 * UI
 
 ** Theme
