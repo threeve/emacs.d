@@ -92,6 +92,7 @@ Install use-package to make package management and configuration nicer.
      "<SPC> o" '("org" . "org mode")
      "<SPC> u" "package"
      "<SPC> n" "narrow"
+     ;; "<SPC> i" "idomenu"
      )
     (which-key-mode t))
 
@@ -363,3 +364,86 @@ Install use-package to make package management and configuration nicer.
     (setq magit-completing-read-function #'magit-ido-completing-read))
 
 #+END_SRC
+
+* Completion
+
+** Ido
+
+[[https://www.emacswiki.org/emacs/InteractivelyDoThings][Ido]] is a completion system included with Emacs.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ido
+    :init
+    (setq ido-create-new-buffer 'always
+          ido-enable-flex-matching t
+          ido-use-faces nil)
+    :config
+    (ido-mode t)
+    (ido-everywhere t))
+
+#+END_SRC
+
+Ido-ubiquitous adds ido to many places that use completing-read like Magit and Projectile.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ido-ubiquitous
+    :ensure t
+    :config (ido-ubiquitous-mode t))
+
+#+END_SRC
+
+Use flx-ido to get fuzzy matching.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flx-ido
+    :ensure t
+    :after ido
+    :config (flx-ido-mode t))
+
+#+END_SRC
+
+By default Ido shows completion candidates inline, but
+ido-vertical-mode turns that into a vertical list.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ido-vertical-mode
+    :ensure t
+    :after ido
+    :init
+    (setq ido-vertical-indicator "─►")
+    :config
+    (defun jafo/ido-setup-hook ()
+      (define-key ido-completion-map (kbd "C-j") #'ido-next-match)
+      (define-key ido-completion-map (kbd "C-k") #'ido-prev-match))
+    (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
+    (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+    (ido-vertical-mode t))
+
+#+END_SRC
+
+[[https://github.com/nonsequitur/smex][Smex]] integrates completion into M-x.
+
+ #+BEGIN_SRC emacs-lisp
+
+   (use-package smex
+     :ensure t
+     :bind (("M-x" . smex)
+            ("M-X" . smex-major-mode-commands)))
+
+ #+END_SRC
+
+ Integrating ido with imenu makes for easier imenu navigation.
+
+ #+BEGIN_SRC emacs-lisp
+
+   (use-package idomenu
+     :ensure t
+     :after ido
+     :bind (:map evil-normal-state-map
+                 ("<SPC> i" . idomenu)))
+
+ #+END_SRC
