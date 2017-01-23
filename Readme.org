@@ -339,4 +339,27 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+* Version Control
 
+** Magit
+
+[[https://magit.vc][Magit]] is the best interface for git, period.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package magit
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> g b" . magit-blame)
+                ("<SPC> g c" . magit-clone)
+                ("<SPC> g d" . magit-diff-buffer-file-popup)
+                ("<SPC> g l" . magit-log-buffer-file)
+                ("<SPC> g s" . magit-status)
+                )
+    :config
+    (use-package evil-magit :ensure t)
+    (magit-define-popup-switch 'magit-log-popup
+                               ?m "Omit merge commits" "--no-merges")
+    (setq magit-completing-read-function #'magit-ido-completing-read))
+
+#+END_SRC
