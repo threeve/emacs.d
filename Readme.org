@@ -447,3 +447,38 @@ ido-vertical-mode turns that into a vertical list.
                  ("<SPC> i" . idomenu)))
 
  #+END_SRC
+
+** Company
+
+[[http://company-mode.github.io/][Company]] provides in-buffer completion for various text and programming
+modes via pluggable backends.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company
+    :ensure t
+    :diminish ""
+    :config
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-j") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous)
+    (define-key company-active-map (kbd "C-k") #'company-select-previous)
+    (setq company-idle-delay 0.2
+          company-dabbrev-downcase nil    ; pretty sure company has a bug in the default
+          company-require-match nil
+          company-selection-wrap-around t
+          company-tooltip-align-annotations t)
+    (global-company-mode t))
+
+#+END_SRC
+
+Company quickhelp can show inline documentation for company completion candidates.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company-quickhelp
+    :ensure t
+    :after company
+    :config (company-quickhelp-mode t))
+
+#+END_SRC
