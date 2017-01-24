@@ -375,6 +375,54 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Git Time Machine
+
+Time travel through git revisions.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package git-timemachine
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> g t" . git-timemachine))
+    :config
+    ;; see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
+    (evil-make-overriding-map git-timemachine-mode-map 'normal)
+    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
+
+#+END_SRC
+
+** Ediff
+
+Instruct ediff to not open a separate frame for the diff controls.
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq ediff-window-setup-function #'ediff-setup-windows-plain)
+
+#+END_SRC
+
+** diffhl
+
+Diffhl will indicated changed hunks in the fringe.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package diff-hl
+    :ensure t
+    :config (global-diff-hl-mode))
+
+#+END_SRC
+
+** gist
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package gist
+    :ensure t)
+
+#+END_SRC
+
 * Completion
 
 ** Ido
