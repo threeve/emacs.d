@@ -588,6 +588,18 @@ Add [[https://github.com/BurntSushi/ripgrep][ripgrep]] support to projectile.
 
 #+END_SRC
 
+** macOS trash
+
+Delete files by moving them to the macOS trash folder.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package osx-trash
+    :ensure t
+    :config (osx-trash-setup))
+
+#+END_SRC
+
 * Writing and Editing
 
 ** Text Settings
