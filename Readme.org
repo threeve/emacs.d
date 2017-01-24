@@ -70,6 +70,16 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Exec Path
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package exec-path-from-shell
+    :ensure t
+    :config (exec-path-from-shell-initialize))
+
+#+END_SRC
+
 ** Help
 
    [[https://github.com/justbur/emacs-which-key][Which key]] provides visual guidance on incomplete key chords which
