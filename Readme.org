@@ -588,3 +588,44 @@ Add [[https://github.com/BurntSushi/ripgrep][ripgrep]] support to projectile.
 
 #+END_SRC
 
+* Writing and Editing
+
+** Text Settings
+
+#+BEGIN_SRC emacs-lisp
+
+  (auto-save-mode 0)
+  (global-auto-revert-mode t)             ; automatically read changed files
+
+  (setq-default indent-tabs-mode nil)     ; use spaces by default
+  (setq require-final-newline t           ; always end files with a newline
+        sentence-end-double-space nil)
+
+  (add-hook 'text-mode-hook #'turn-on-auto-fill)
+
+#+END_SRC
+
+** Spell Checking
+
+Enable flyspell to do spellchecking automatically.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flyspell
+    :diminish ""
+    :config
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+
+#+END_SRC
+
+** EditorConfig
+
+This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if the exist.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package editorconfig
+    :ensure t)
+
+#+END_SRC
