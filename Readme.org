@@ -492,3 +492,37 @@ Company quickhelp can show inline documentation for company completion candidate
     :config (company-quickhelp-mode t))
 
 #+END_SRC
+* Project and File Management
+
+** Projectile
+
+[[http://projectile.readthedocs.io/en/latest/][Projectile]] adds project management and navigation.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package projectile
+    :ensure t
+    :init
+    (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
+    :config
+    ;; "<SPC> p s s" is lame, this is better
+    (define-key projectile-command-map (kbd "/") #'projectile-ag)
+    (with-eval-after-load 'evil
+      (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
+    (projectile-global-mode))
+
+#+END_SRC
+
+Add [[https://github.com/BurntSushi/ripgrep][ripgrep]] support to projectile.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package projectile-ripgrep
+    :ensure t
+    :after projectile
+    :bind (:map projectile-command-map
+		("/" . projectile-ripgrep)
+		("s r" . projectile-ripgrep)))
+
+#+END_SRC
+
