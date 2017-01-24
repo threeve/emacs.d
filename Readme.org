@@ -540,6 +540,20 @@ Company quickhelp can show inline documentation for company completion candidate
     :config (company-quickhelp-mode t))
 
 #+END_SRC
+
+** Yasnippet
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package yasnippet
+    :ensure t
+    :diminish yas-minor-mode
+    :config
+    (setq yas-prompt-functions '(yas-completing-prompt))
+    (yas-global-mode t))
+
+#+END_SRC
+
 * Project and File Management
 
 ** Projectile
