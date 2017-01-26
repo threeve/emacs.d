@@ -671,3 +671,48 @@ This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if
     :init (add-hook 'markdown-mode-hook #'pandoc-mode))
 
 #+END_SRC
+* Programming
+
+** c / c++ / objc
+
+*** base settings
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq c-basic-offset 4)
+
+  ;; treat .mm files as objc. alas there is no objc++-mode
+  (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
+
+  ;; try to detect objc headers automatically
+  (add-to-list 'magic-mode-alist
+               `(,(lambda ()
+                    (and (string= (file-name-extension buffer-file-name) "h")
+                         (re-search-forward "@\\(?:\\<interface\\>\\|\\<protocol\\>\\)" magic-mode-regexp-match-limit t)))
+                 . objc-mode))
+
+#+END_SRC
+
+*** clang-format
+
+Requires that =clang-format= be installed via brew or other method.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package clang-format
+    :ensure t
+    :commands (clang-format-region clang-format-buffer)
+    :init
+    (evil-define-key 'visual c-mode-base-map (kbd "g =") #'clang-format-region)
+    (evil-define-key 'normal c-mode-base-map (kbd "g =") #'clang-format-buffer))
+
+#+END_SRC
+
+*** cmake
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package cmake-mode
+    :ensure t)
+
+#+END_SRC
