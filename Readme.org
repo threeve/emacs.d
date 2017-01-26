@@ -4,6 +4,7 @@
 #+BEGIN_SRC emacs-lisp
 
   (setq inhibit-default-init t
+        load-prefer-newer t
         make-backup-files nil)
 
 #+END_SRC
