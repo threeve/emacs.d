@@ -3,7 +3,8 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (setq inhibit-default-init t)
+  (setq inhibit-default-init t
+        make-backup-files nil)
 
 #+END_SRC
 
