@@ -732,6 +732,31 @@ Use =.dir-locals.el= to set =bug-reference-bug-regexp= as needed.
 
 #+END_SRC
 
+*** Rest Client
+
+Rest client allows http debugging in emacs.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package restclient
+    :ensure t
+    :mode (("\\.http$" . restclient-mode)))
+  
+#+END_SRC
+
+Add autocompletion for http headers.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company-restclient
+    :ensure t
+    :after restclient
+    :config
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends #'company-restclient)))
+
+#+END_SRC
+
 ** c / c++ / objc
 
 *** base settings
