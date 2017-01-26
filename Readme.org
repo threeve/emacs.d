@@ -673,6 +673,19 @@ This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if
 #+END_SRC
 * Programming
 
+** General
+
+*** Bug Reference Mode
+
+Use =.dir-locals.el= to set =bug-reference-bug-regexp= as needed.
+
+#+BEGIN_SRC emacs-lisp
+
+  (add-hook 'text-mode-hook #'bug-reference-mode)
+  (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+
+#+END_SRC
+
 ** c / c++ / objc
 
 *** base settings
