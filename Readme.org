@@ -421,7 +421,18 @@ Diffhl will indicated changed hunks in the fringe.
 #+BEGIN_SRC emacs-lisp
 
   (use-package gist
-    :ensure t)
+    :ensure t
+    :commands (gist-list gist-region-or-buffer gist-region-or-buffer-private)
+    :init
+    (setq gist-command-map
+          (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "l") #'gist-list)
+            (define-key map (kbd "c") #'gist-region-or-buffer)
+            (define-key map (kbd "C") #'gist-region-or-buffer-private)
+            map))
+    (fset 'gist-command-map gist-command-map)
+    (with-eval-after-load 'evil
+      (define-key evil-normal-state-map (kbd "<SPC> g g") 'gist-command-map)))
 
 #+END_SRC
 
