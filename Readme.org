@@ -425,6 +425,19 @@ Diffhl will indicated changed hunks in the fringe.
 
 #+END_SRC
 
+** Browse at Remote
+
+Support browsing to files on github/gitlab/etc.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package browse-at-remote
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> g h" . browse-at-remote)))
+
+#+END_SRC
+
 * Completion
 
 ** Ido
