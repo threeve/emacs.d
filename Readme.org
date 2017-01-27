@@ -303,11 +303,12 @@ Install use-package to make package management and configuration nicer.
           org-completion-use-ido t
           org-deadline-warning-days 3
           org-default-notes-file "~/Documents/gtd.org"
+          org-directory "~/Documents"
           org-ellipsis " …"
           org-enforce-todo-dependencies t
           org-export-with-toc nil
           org-hide-leading-stars t
-          org-log-done t
+          org-log-done 'time
           org-log-into-drawer t
           org-outline-path-complete-in-steps nil
           org-refile-allow-creating-parent-nodes 'confirm
@@ -316,6 +317,8 @@ Install use-package to make package management and configuration nicer.
           org-refile-use-outline-path t
           org-return-follows-link t
           org-src-fontify-natively t
+          org-src-tab-acts-natively t
+          org-src-window-setup 'current-window
           org-startup-indented t)
     (set-face-attribute 'org-level-1 nil :height 1.6 :weight 'semi-bold)
     (set-face-attribute 'org-level-2 nil :height 1.4 :weight 'semi-bold)
