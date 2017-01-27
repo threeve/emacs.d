@@ -859,3 +859,29 @@ Requires that =clang-format= be installed via brew or other method.
     :ensure t)
 
 #+END_SRC
+
+*** rtags
+
+[[https://github.com/Andersbakken/rtags][RTags]] is an indexer based on clang that provides autocompletion and
+symbol navigation for c/c++/objc. The package is installed via
+homebrew, so refer to its elisp directory under =/usr/local/share=
+instead of requesting installation from MELPA.
+
+Using RTags necessitates the creation of a =compile_commands.json=
+file for each project. For Xcode projects the best way to do this is
+to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the output of =xcodebuild= through it.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package rtags
+    :load-path "/usr/local/share/emacs/site-lisp/rtags"
+    :config
+    (require 'flycheck-rtags)
+    (setq rtags-autostart-diagnostics t
+          rtags-completions-enabled t)
+    (rtags-enable-standard-keybindings)
+    (rtags-diagnostics)
+    (with-eval-after-load 'company
+      (push 'company-rtags company-backends)))
+
+#+END_SRC
