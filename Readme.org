@@ -784,6 +784,38 @@ Add autocompletion for http headers.
 
 #+END_SRC
 
+*** Flycheck
+
+[[http://www.flycheck.org/en/latest/][Flycheck]] provides real time syntax checking. It supports many syntax
+checkers and linters out of the box and is highly extensible. While
+not strictly a programming-specific tool (it supports text checking and
+markdown linters, etc) it is included under the programming heading
+since it is primarily used to detect syntax errors in source code.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flycheck
+    :ensure t
+    :init
+    (setq flycheck-mode-line-prefix "✓")
+    :config
+    (setq flycheck-display-errors-delay 0.5
+          flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
+    (add-hook 'after-init-hook #'global-flycheck-mode))
+
+#+END_SRC
+
+Use =flycheck-package= for linting emacs packages.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flycheck-package
+    :ensure t
+    :after flycheck
+    :config (flycheck-package-setup))
+
+#+END_SRC
+
 ** c / c++ / objc
 
 *** base settings
