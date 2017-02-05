@@ -129,8 +129,13 @@ Install use-package to make package management and configuration nicer.
 
 #+BEGIN_SRC emacs-lisp
 
+  (use-package nord-theme
+    :ensure t
+    :config (load-theme 'nord t))
+
   (use-package apropospriate-theme
     :ensure t
+    :disabled t
     :config (load-theme 'apropospriate-dark t))
 
 #+END_SRC
