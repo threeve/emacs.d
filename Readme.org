@@ -131,7 +131,19 @@ Install use-package to make package management and configuration nicer.
 
   (use-package apropospriate-theme
     :ensure t
+    :disabled t
     :config (load-theme 'apropospriate-dark t))
+
+  (use-package base16-theme
+    :ensure t
+    :config
+    (load-theme 'base16-onedark t)
+    (set-face-attribute 'org-block-begin-line nil
+                        :underline t
+                        :inherit '(org-meta-line))
+    (set-face-attribute 'org-block-end-line nil
+                        :overline t
+                        :inherit '(org-meta-line)))
 
 #+END_SRC
 
