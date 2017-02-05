@@ -751,7 +751,7 @@ Use =.dir-locals.el= to set =bug-reference-bug-regexp= as needed.
   (defun jafo/colorize-compilation-buffer ()
     (let ((inhibit-read-only t))
       (ansi-color-apply-on-region compilation-filter-start (point))))
-  (add-hook 'compilation-filter-hook #'jafo:colorize-compilation-buffer)
+  (add-hook 'compilation-filter-hook #'jafo/colorize-compilation-buffer)
 
   (with-eval-after-load 'compile
     (add-to-list 'compilation-error-regexp-alist 'xcpretty)
