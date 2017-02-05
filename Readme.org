@@ -888,3 +888,34 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
       (push 'company-rtags company-backends)))
 
 #+END_SRC
+
+** Djinni
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package djinni-mode
+    :load-path "~/Source/djinni-mode"
+    :config
+    (with-eval-after-load 'flycheck
+      (flycheck-define-checker djinni
+        "A simple syntax checker for djinni IDL files.
+  Requires the `djinni` executable to be in the executable path."
+        :command ("djinni"
+                  "--skip-generation" "true"
+                  "--idl" source-original)
+        :error-patterns
+        ((error line-start (file-name) " (" line "." column "): " (message) line-end))
+        :modes (djinni-mode))
+      (add-to-list 'flycheck-checkers 'djinni 'append)))
+
+#+END_SRC
+
+** Haskell
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package haskell-mode
+    :ensure t
+    :pin melpa-stable)
+
+#+END_SRC
