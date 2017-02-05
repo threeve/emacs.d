@@ -1,0 +1,8 @@
+# key: ©
+# name: copyright header
+# --
+//
+//  Copyright © `(format-time-string "%Y")` Salesforce. All rights reserved.
+//
+
+$0
