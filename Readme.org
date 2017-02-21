@@ -1,0 +1,933 @@
+
+* General Config
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq inhibit-default-init t
+        load-prefer-newer t
+        make-backup-files nil)
+
+#+END_SRC
+
+** Use Package
+
+Install use-package to make package management and configuration nicer.
+
+#+BEGIN_SRC emacs-lisp
+
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (eval-when-compile
+    (require 'use-package))
+  (require 'diminish)
+  (require 'bind-key)
+
+#+END_SRC
+
+** Custom
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
+
+#+END_SRC
+
+** Mac keys
+
+   Different distributions of Emacs on macOS have different ideas
+   about what the Command and Option keys should do, so be explicit
+   here to make the consistent.
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq mac-option-modifier 'none
+        mac-command-modifier 'super
+        mac-right-command-modifier 'meta)
+
+  (global-set-key (kbd "s-a") #'mark-whole-buffer)
+  (global-set-key (kbd "s-k") #'kill-this-buffer)
+  (global-set-key (kbd "s-l") #'goto-line)
+  (global-set-key (kbd "s-q") #'save-buffers-kill-terminal)
+  (global-set-key (kbd "s-s") #'save-buffer)
+  (global-set-key (kbd "s-w") #'delete-frame)
+
+#+END_SRC
+
+   Add some text scaling bindings similar to other macOS apps.
+
+#+BEGIN_SRC emacs-lisp
+
+  (defun jafo-text-scale-reset ()
+    "Reset text scaling to base size."
+    (interactive)
+    (text-scale-set 0))
+
+  (global-set-key (kbd "s-+") #'text-scale-increase)
+  (global-set-key (kbd "s-=") #'text-scale-increase)
+  (global-set-key (kbd "s--") #'text-scale-decrease)
+  (global-set-key (kbd "s-0") #'jafo-text-scale-reset)
+
+#+END_SRC
+
+** Exec Path
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package exec-path-from-shell
+    :ensure t
+    :config (exec-path-from-shell-initialize))
+
+#+END_SRC
+
+** Help
+
+   [[https://github.com/justbur/emacs-which-key][Which key]] provides visual guidance on incomplete key chords which
+   aids in discovery.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package which-key
+    :ensure t
+    :demand t
+    :diminish ""
+    :bind ("C-h C-k" . which-key-show-top-level)
+    :config
+    (setq which-key-idle-delay 0.2
+          which-key-add-column-padding 0)
+    (which-key-declare-prefixes
+     "<SPC> g" '("scm" . "Magit, git, scm commands")
+     "<SPC> p" '("projectile" . "Projectile commands")
+     "<SPC> d" '("deft" . "notes: deft, etc")
+     "<SPC> o" '("org" . "org mode")
+     "<SPC> u" "package"
+     "<SPC> n" "narrow"
+     ;; "<SPC> i" "idomenu"
+     )
+    (which-key-mode t))
+
+#+END_SRC
+
+   [[https://github.com/steckerhalter/discover-my-major][Discover My Major]] displays keybindings for the current major mode.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package discover-my-major
+    :ensure t
+    :bind ("C-h C-m" . discover-my-major)
+    :config
+    (with-eval-after-load 'evil
+      (evil-set-initial-state 'makey-key-mode 'motion)))
+
+#+END_SRC
+
+* UI
+
+** Theme
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package apropospriate-theme
+    :ensure t
+    :disabled t
+    :config (load-theme 'apropospriate-dark t))
+
+  (use-package base16-theme
+    :ensure t
+    :config
+    (load-theme 'base16-onedark t)
+    (set-face-attribute 'org-block-begin-line nil
+                        :underline t
+                        :inherit '(org-meta-line))
+    (set-face-attribute 'org-block-end-line nil
+                        :overline t
+                        :inherit '(org-meta-line)))
+
+#+END_SRC
+
+** Fonts
+
+   [[https://github.com/adobe-fonts][Adobe's "Source" family of fonts]] are quite nice, and [[https://github.com/i-tu/Hasklig][Hasklig]] is a
+   derivative of [[https://github.com/adobe-fonts/source-code-pro][Source Code Pro]] that adds many programming
+   ligatures. Use of the ligatures requires using the railwaycat emacs
+   port with mac-auto-operator-composition-mode enabled.
+
+   On macOS these fonts can be installed with [[https://caskroom.github.io][Homebrew Cask]].
+
+#+BEGIN_SRC emacs-lisp
+
+  (prefer-coding-system 'utf-8-unix)
+
+  (set-face-attribute 'default nil
+                      :family "Hasklig"
+                      :height 120
+                      :weight 'normal)
+
+  (set-face-attribute 'variable-pitch nil
+                      :family "Source Sans Pro"
+                      :height 120
+                      :weight 'normal)
+
+#+END_SRC
+
+   Additionally configure some icon fonts that add various programming
+   related glyphs to the private use area:
+
+   - [[http://fontawesome.io][Font Awesome]]
+   - [[http://vorillaz.github.io/devicons/#/main][Devicons]]
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; FontAwesome private use area, e.g. Rebel logo: 
+  ;; https://fortawesome.github.io/Font-Awesome/
+  (set-fontset-font t '(#xf000 . #xf3ff)
+                    (font-spec :family "FontAwesome")
+                    nil 'prepend)
+
+  ;; devicons private use area, e.g. React logo: 
+  ;; http://vorillaz.github.io/devicons/#/main
+  (set-fontset-font t '(#xe600 . #xe6ff)
+                    (font-spec :family "icomoon")
+                    nil 'prepend)
+
+#+END_SRC
+
+** Chrome
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq
+   indicate-empty-lines t
+   inhibit-startup-screen t
+   initial-scratch-message nil
+   ring-bell-function 'ignore
+   scroll-conservatively 10000
+   scroll-preserve-screen-position t
+   use-dialog-box nil
+   )
+
+  (setq-default
+   cursor-in-non-selected-windows nil
+   )
+
+  (fset 'yes-or-no-p #'y-or-n-p)
+
+  (global-hl-line-mode t)
+  (global-visual-line-mode 0)
+  (line-number-mode 0)
+  (scroll-bar-mode 0)
+  (show-paren-mode t)
+  (tool-bar-mode 0)
+
+#+END_SRC
+
+** Indent Guide
+
+   [[https://github.com/zk-phi/indent-guide][Indent Guide]] draws a vertical line indicator to show the
+   indentation level of the current block. This is useful in
+   programming modes, less so in text modes. It also can require some
+   tweaking to get the face to look right with your theme.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package indent-guide
+    :ensure t
+    :diminish ""
+    :config
+    (setq indent-guide-char "│")
+    (add-hook 'prog-mode-hook #'indent-guide-mode))
+
+#+END_SRC
+
+* Evil
+
+  [[https://github.com/emacs-evil/evil][Evil mode]] is an impressively complete Vim emulation layer for
+  emacs. With evil mode, emacs can act as a better vim than vim itself
+  due to having a much more flexible platform upon which to build an
+  editor ecosystem.
+  
+#+BEGIN_SRC emacs-lisp
+
+  (use-package evil
+    :ensure t
+    :demand t
+    :bind (:map evil-motion-state-map
+                ("j" . evil-next-visual-line)
+                ("k" . evil-previous-visual-line)
+                ("C-j" . evil-scroll-down)
+                ("C-k" . evil-scroll-up)
+           :map evil-normal-state-map
+                ("[ q" . previous-error)
+                ("] q" . next-error))
+    :init
+    (setq evil-mode-line-format '(before . mode-line-front-space)
+          evil-want-C-w-in-emacs-state t
+          evil-want-Y-yank-to-eol t
+          evil-visual-state-cursor 'hollow)
+    :config
+    (add-hook 'git-commit-mode-hook #'evil-insert-state)
+    (evil-mode t))
+
+    (use-package evil-commentary
+      :ensure t
+      :after evil
+      :diminish ""
+      :config (evil-commentary-mode))
+
+    (use-package evil-surround
+      :ensure t
+      :after evil
+      :config (global-evil-surround-mode t))
+
+    (use-package evil-quickscope
+      :ensure t
+      :after evil
+      :config (global-evil-quickscope-mode t))
+
+#+END_SRC
+
+* Org mode
+
+** Package + contrib
+
+  Use an up-to-date version of [[http://orgmode.org][Org mode]] from the [[Org package archive]],
+  and include the optional contributed features and packages.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package org
+    :ensure org-plus-contrib
+    :pin org
+    :demand t
+    :mode ("\\.org$" . org-mode)
+    :bind (:map evil-normal-state-map
+                ("<SPC> o a" . org-agenda)
+                ("<SPC> o b" . org-ido-switchb)
+                ("<SPC> o c" . org-capture)
+                ("<SPC> o l" . org-store-link)
+           :map evil-motion-state-map
+                ("[ [" . org-previous-visible-heading)
+                ("] ]" . org-next-visible-heading))
+    :init
+    (setq
+          org-completion-use-ido t
+          org-deadline-warning-days 3
+          org-default-notes-file "~/Documents/gtd.org"
+          org-directory "~/Documents"
+          org-ellipsis " …"
+          org-enforce-todo-dependencies t
+          org-export-with-toc nil
+          org-hide-leading-stars t
+          org-log-done 'time
+          org-log-into-drawer t
+          org-outline-path-complete-in-steps nil
+          org-refile-allow-creating-parent-nodes 'confirm
+          org-refile-targets '((nil :maxlevel . 9)
+                               (org-agenda-files :maxlevel . 9))
+          org-refile-use-outline-path t
+          org-return-follows-link t
+          org-src-fontify-natively t
+          org-src-tab-acts-natively t
+          org-src-window-setup 'current-window
+          org-startup-indented t)
+    (set-face-attribute 'org-level-1 nil :height 1.6 :weight 'semi-bold)
+    (set-face-attribute 'org-level-2 nil :height 1.4 :weight 'semi-bold)
+    (set-face-attribute 'org-level-3 nil :height 1.2)
+    (set-face-attribute 'org-level-4 nil :height 1.1)
+    (set-face-attribute 'org-block nil :foreground nil) ; org 9... seems a bug in apropospriate
+    :config
+    (use-package org-checklist)
+    (use-package org-mime))
+
+#+END_SRC
+
+** Agenda
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package org-agenda
+    :init
+    (setq org-agenda-files '("~/Documents/gtd.org")
+          org-agenda-repeating-timestamp-show-all t
+          org-agenda-restore-windows-after-quit t
+          org-agenda-skip-deadline-if-done t
+          org-agenda-skip-scheduled-if-done t
+          org-agenda-start-on-weekday nil)
+    :config
+    (org-add-agenda-custom-command
+     '("d" "Deadlines and scheduled work" alltodo ""
+       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
+        (org-agenda-prefix-format '((todo . " %i %-22(org-entry-get nil \"DEADLINE\") %-12:c %s")))
+        (org-agenda-sorting-strategy '(deadline-up)))))
+    )
+
+#+END_SRC
+
+* Version Control
+
+** Magit
+
+[[https://magit.vc][Magit]] is the best interface for git, period.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package magit
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> g b" . magit-blame)
+                ("<SPC> g c" . magit-clone)
+                ("<SPC> g d" . magit-diff-buffer-file-popup)
+                ("<SPC> g l" . magit-log-buffer-file)
+                ("<SPC> g s" . magit-status)
+                )
+    :config
+    (use-package evil-magit :ensure t)
+    (magit-define-popup-switch 'magit-log-popup
+                               ?m "Omit merge commits" "--no-merges")
+    (setq magit-completing-read-function #'magit-ido-completing-read))
+
+#+END_SRC
+
+** Git Time Machine
+
+Time travel through git revisions.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package git-timemachine
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> g t" . git-timemachine))
+    :config
+    ;; see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
+    (evil-make-overriding-map git-timemachine-mode-map 'normal)
+    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
+
+#+END_SRC
+
+** Ediff
+
+Instruct ediff to not open a separate frame for the diff controls.
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq ediff-window-setup-function #'ediff-setup-windows-plain)
+
+#+END_SRC
+
+** diffhl
+
+Diffhl will indicated changed hunks in the fringe.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package diff-hl
+    :ensure t
+    :config (global-diff-hl-mode))
+
+#+END_SRC
+
+** gist
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package gist
+    :ensure t
+    :commands (gist-list gist-region-or-buffer gist-region-or-buffer-private)
+    :init
+    (setq gist-command-map
+          (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "l") #'gist-list)
+            (define-key map (kbd "c") #'gist-region-or-buffer)
+            (define-key map (kbd "C") #'gist-region-or-buffer-private)
+            map))
+    (fset 'gist-command-map gist-command-map)
+    (with-eval-after-load 'evil
+      (define-key evil-normal-state-map (kbd "<SPC> g g") 'gist-command-map)))
+
+#+END_SRC
+
+** Browse at Remote
+
+Support browsing to files on github/gitlab/etc.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package browse-at-remote
+    :ensure t
+    :bind (:map evil-normal-state-map
+                ("<SPC> g h" . browse-at-remote)))
+
+#+END_SRC
+
+* Completion
+
+** Ido
+
+[[https://www.emacswiki.org/emacs/InteractivelyDoThings][Ido]] is a completion system included with Emacs.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ido
+    :init
+    (setq ido-create-new-buffer 'always
+          ido-enable-flex-matching t
+          ido-use-faces nil)
+    :config
+    (ido-mode t)
+    (ido-everywhere t))
+
+#+END_SRC
+
+Ido-ubiquitous adds ido to many places that use completing-read like Magit and Projectile.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ido-ubiquitous
+    :ensure t
+    :config (ido-ubiquitous-mode t))
+
+#+END_SRC
+
+Use flx-ido to get fuzzy matching.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flx-ido
+    :ensure t
+    :after ido
+    :config (flx-ido-mode t))
+
+#+END_SRC
+
+By default Ido shows completion candidates inline, but
+ido-vertical-mode turns that into a vertical list.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ido-vertical-mode
+    :ensure t
+    :after ido
+    :init
+    (setq ido-vertical-indicator "─►")
+    :config
+    (defun jafo/ido-setup-hook ()
+      (define-key ido-completion-map (kbd "C-j") #'ido-next-match)
+      (define-key ido-completion-map (kbd "C-k") #'ido-prev-match))
+    (add-hook 'ido-setup-hook #'jafo/ido-setup-hook)
+    (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+    (ido-vertical-mode t))
+
+#+END_SRC
+
+[[https://github.com/nonsequitur/smex][Smex]] integrates completion into M-x.
+
+ #+BEGIN_SRC emacs-lisp
+
+   (use-package smex
+     :ensure t
+     :bind (("M-x" . smex)
+            ("M-X" . smex-major-mode-commands)))
+
+ #+END_SRC
+
+ Integrating ido with imenu makes for easier imenu navigation.
+
+ #+BEGIN_SRC emacs-lisp
+
+   (use-package idomenu
+     :ensure t
+     :after ido
+     :bind (:map evil-normal-state-map
+                 ("<SPC> i" . idomenu)))
+
+ #+END_SRC
+
+** Company
+
+[[http://company-mode.github.io/][Company]] provides in-buffer completion for various text and programming
+modes via pluggable backends.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company
+    :ensure t
+    :diminish ""
+    :config
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-j") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous)
+    (define-key company-active-map (kbd "C-k") #'company-select-previous)
+    (setq company-idle-delay 0.2
+          company-dabbrev-downcase nil    ; pretty sure company has a bug in the default
+          company-require-match nil
+          company-selection-wrap-around t
+          company-tooltip-align-annotations t)
+    (global-company-mode t))
+
+#+END_SRC
+
+Company quickhelp can show inline documentation for company completion candidates.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company-quickhelp
+    :ensure t
+    :after company
+    :config (company-quickhelp-mode t))
+
+#+END_SRC
+
+** Yasnippet
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package yasnippet
+    :ensure t
+    :diminish yas-minor-mode
+    :config
+    (setq yas-prompt-functions '(yas-completing-prompt))
+    (yas-global-mode t))
+
+#+END_SRC
+
+* Project and File Management
+
+** Projectile
+
+[[http://projectile.readthedocs.io/en/latest/][Projectile]] adds project management and navigation.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package projectile
+    :ensure t
+    :init
+    (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
+    :config
+    ;; "<SPC> p s s" is lame, this is better
+    (define-key projectile-command-map (kbd "/") #'projectile-ag)
+    (with-eval-after-load 'evil
+      (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
+    (projectile-global-mode))
+
+#+END_SRC
+
+Add [[https://github.com/BurntSushi/ripgrep][ripgrep]] support to projectile.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package projectile-ripgrep
+    :ensure t
+    :after projectile
+    :bind (:map projectile-command-map
+		("/" . projectile-ripgrep)
+		("s r" . projectile-ripgrep)))
+
+#+END_SRC
+
+** macOS trash
+
+Delete files by moving them to the macOS trash folder.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package osx-trash
+    :ensure t
+    :config (osx-trash-setup))
+
+#+END_SRC
+
+** dired
+
+Configure and extend the built-in file manager, dired.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package dired
+    :after evil
+    :bind (:map evil-motion-state-map
+                ("-" . dired-jump))
+    :init
+    (setq dired-recursive-copies 'always
+          dired-recursive-deletes 'top)
+    :config
+    (evil-define-key 'normal dired-mode-map "-" 'dired-up-directory))
+
+#+END_SRC
+
+Doing additional configuration when gnu ls is available.
+
+#+BEGIN_SRC emacs-lisp
+
+  (when (executable-find "gls")
+    (setq insert-directory-program "gls"
+          dired-listing-switches "-lFAGh1v"
+          dired-use-ls-dired t))
+
+#+END_SRC
+
+* Writing and Editing
+
+** Text Settings
+
+#+BEGIN_SRC emacs-lisp
+
+  (auto-save-mode 0)
+  (global-auto-revert-mode t)             ; automatically read changed files
+
+  (setq-default indent-tabs-mode nil)     ; use spaces by default
+  (setq require-final-newline t           ; always end files with a newline
+        sentence-end-double-space nil)
+
+  (add-hook 'text-mode-hook #'turn-on-auto-fill)
+
+#+END_SRC
+
+** Spell Checking
+
+Enable flyspell to do spellchecking automatically.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flyspell
+    :diminish ""
+    :config
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+
+#+END_SRC
+
+** EditorConfig
+
+This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if the exist.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package editorconfig
+    :ensure t)
+
+#+END_SRC
+
+** Markdown
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package markdown-mode
+    :ensure t
+    :mode (("\\.md$" . markdown-mode)
+           ("\\.markdown$" . markdown-mode))
+    :config
+    ;; embiggen headers 
+    (set-face-attribute 'markdown-header-face-1 nil :height 1.6)
+    (set-face-attribute 'markdown-header-face-2 nil :height 1.4)
+    (set-face-attribute 'markdown-header-face-3 nil :height 1.2)
+    (set-face-attribute 'markdown-header-face-4 nil :height 1.1))
+
+#+END_SRC
+
+** Pandoc
+   
+#+BEGIN_SRC emacs-lisp
+
+  (use-package pandoc-mode
+    :ensure t
+    :commands pandoc-mode
+    :init (add-hook 'markdown-mode-hook #'pandoc-mode))
+
+#+END_SRC
+* Programming
+
+** General
+
+*** Bug Reference Mode
+
+Use =.dir-locals.el= to set =bug-reference-bug-regexp= as needed.
+
+#+BEGIN_SRC emacs-lisp
+
+  (add-hook 'text-mode-hook #'bug-reference-mode)
+  (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+
+#+END_SRC
+
+*** Compilation
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq compilation-read-command nil
+        compilation-scroll-output 'always)
+
+  (require 'ansi-color)
+  (defun jafo/colorize-compilation-buffer ()
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region compilation-filter-start (point))))
+  (add-hook 'compilation-filter-hook #'jafo/colorize-compilation-buffer)
+
+  (with-eval-after-load 'compile
+    (add-to-list 'compilation-error-regexp-alist 'xcpretty)
+    (add-to-list 'compilation-error-regexp-alist-alist
+                 '(xcpretty
+                   "^\\(?:\\(\u26a0\ufe0f\\|\\[!\\]\\)\\|\\(?:\u274c\\|\\[x\\]\\)\\)\\s-+\\([^:]+?\\):\\([0-9]+\\):\\([0-9]+\\): .*"
+                   2 3 4 nil 2)))
+
+#+END_SRC
+
+*** Rest Client
+
+Rest client allows http debugging in emacs.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package restclient
+    :ensure t
+    :mode (("\\.http$" . restclient-mode)))
+  
+#+END_SRC
+
+Add autocompletion for http headers.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package company-restclient
+    :ensure t
+    :after restclient
+    :config
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends #'company-restclient)))
+
+#+END_SRC
+
+*** Flycheck
+
+[[http://www.flycheck.org/en/latest/][Flycheck]] provides real time syntax checking. It supports many syntax
+checkers and linters out of the box and is highly extensible. While
+not strictly a programming-specific tool (it supports text checking and
+markdown linters, etc) it is included under the programming heading
+since it is primarily used to detect syntax errors in source code.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flycheck
+    :ensure t
+    :init
+    (setq flycheck-mode-line-prefix "✓")
+    :config
+    (setq flycheck-display-errors-delay 0.5
+          flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
+    (add-hook 'after-init-hook #'global-flycheck-mode))
+
+#+END_SRC
+
+Use =flycheck-package= for linting emacs packages.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flycheck-package
+    :ensure t
+    :after flycheck
+    :config (flycheck-package-setup))
+
+#+END_SRC
+
+** c / c++ / objc
+
+*** base settings
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq c-basic-offset 4)
+
+  ;; treat .mm files as objc. alas there is no objc++-mode
+  (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
+
+  ;; try to detect objc headers automatically
+  (add-to-list 'magic-mode-alist
+               `(,(lambda ()
+                    (and (string= (file-name-extension buffer-file-name) "h")
+                         (re-search-forward "@\\(?:\\<interface\\>\\|\\<protocol\\>\\)" magic-mode-regexp-match-limit t)))
+                 . objc-mode))
+
+#+END_SRC
+
+*** clang-format
+
+Requires that =clang-format= be installed via brew or other method.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package clang-format
+    :ensure t
+    :commands (clang-format-region clang-format-buffer)
+    :init
+    (evil-define-key 'visual c-mode-base-map (kbd "g =") #'clang-format-region)
+    (evil-define-key 'normal c-mode-base-map (kbd "g =") #'clang-format-buffer))
+
+#+END_SRC
+
+*** cmake
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package cmake-mode
+    :ensure t)
+
+#+END_SRC
+
+*** rtags
+
+[[https://github.com/Andersbakken/rtags][RTags]] is an indexer based on clang that provides autocompletion and
+symbol navigation for c/c++/objc. The package is installed via
+homebrew, so refer to its elisp directory under =/usr/local/share=
+instead of requesting installation from MELPA.
+
+Using RTags necessitates the creation of a =compile_commands.json=
+file for each project. For Xcode projects the best way to do this is
+to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the output of =xcodebuild= through it.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package rtags
+    :load-path "/usr/local/share/emacs/site-lisp/rtags"
+    :config
+    (require 'flycheck-rtags)
+    (setq rtags-autostart-diagnostics t
+          rtags-completions-enabled t)
+    (rtags-enable-standard-keybindings)
+    (rtags-diagnostics)
+    (with-eval-after-load 'company
+      (push 'company-rtags company-backends)))
+
+#+END_SRC
+
+** Djinni
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package djinni-mode
+    :load-path "~/Source/djinni-mode"
+    :config
+    (with-eval-after-load 'flycheck
+      (flycheck-define-checker djinni
+        "A simple syntax checker for djinni IDL files.
+  Requires the `djinni` executable to be in the executable path."
+        :command ("djinni"
+                  "--skip-generation" "true"
+                  "--idl" source-original)
+        :error-patterns
+        ((error line-start (file-name) " (" line "." column "): " (message) line-end))
+        :modes (djinni-mode))
+      (add-to-list 'flycheck-checkers 'djinni 'append)))
+
+#+END_SRC
+
+** Haskell
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package haskell-mode
+    :ensure t
+    :pin melpa-stable)
+
+#+END_SRC

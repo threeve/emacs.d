@@ -3,6 +3,13 @@
 
 # tangled org config file
 config.el
+custom.el
+ido.last
+projectile-bookmarks.eld
+smex-items
+
+# tangled org config file
+Readme.el
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
