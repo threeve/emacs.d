@@ -882,9 +882,10 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
 #+BEGIN_SRC emacs-lisp
 
   (use-package rtags
-    :load-path "/usr/local/share/emacs/site-lisp/rtags"
+    :ensure t
     :config
-    (require 'flycheck-rtags)
+    (use-package flycheck-rtags
+      :ensure t)
     (setq rtags-autostart-diagnostics t
           rtags-completions-enabled t)
     (rtags-enable-standard-keybindings)
