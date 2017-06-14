@@ -1,0 +1,3 @@
+[submodule "vendor/evil-markdown"]
+	path = vendor/evil-markdown
+	url = git://github.com/somelauw/evil-markdown.git

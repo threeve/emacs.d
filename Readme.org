@@ -735,6 +735,9 @@ This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if
     (set-face-attribute 'markdown-header-face-3 nil :height 1.2)
     (set-face-attribute 'markdown-header-face-4 nil :height 1.1))
 
+  (use-package evil-markdown
+    :load-path "~/.emacs.d/vendor/evil-markdown")
+
 #+END_SRC
 
 ** Pandoc
