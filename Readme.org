@@ -263,21 +263,38 @@ Install use-package to make package management and configuration nicer.
     (add-hook 'git-commit-mode-hook #'evil-insert-state)
     (evil-mode t))
 
-    (use-package evil-commentary
-      :ensure t
-      :after evil
-      :diminish ""
-      :config (evil-commentary-mode))
+  (use-package evil-commentary
+    :ensure t
+    :after evil
+    :diminish ""
+    :config (evil-commentary-mode))
 
-    (use-package evil-surround
-      :ensure t
-      :after evil
-      :config (global-evil-surround-mode t))
+  (use-package evil-surround
+    :ensure t
+    :after evil
+    :config (global-evil-surround-mode t))
 
-    (use-package evil-quickscope
-      :ensure t
-      :after evil
-      :config (global-evil-quickscope-mode t))
+  (use-package evil-quickscope
+    :ensure t
+    :after evil
+    :config (global-evil-quickscope-mode t))
+
+  (use-package evil-lion
+    :ensure t
+    :after evil
+    :config
+    (setq evil-lion-left-align-key (kbd "g /"))
+    (setq evil-lion-right-align-key (kbd "g \\"))
+    (evil-lion-mode))
+
+  (use-package evil-org
+    :ensure t
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+              (lambda ()
+                (evil-org-set-key-theme))))
 
 #+END_SRC
 
