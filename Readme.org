@@ -749,7 +749,9 @@ Use =.dir-locals.el= to set =bug-reference-bug-regexp= as needed.
 
 #+BEGIN_SRC emacs-lisp
 
-  (setq compilation-read-command nil
+  (setq compilation-always-kill t
+        compilation-ask-about-save nil
+        compilation-read-command nil
         compilation-scroll-output 'always)
 
   (require 'ansi-color)
