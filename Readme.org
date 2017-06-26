@@ -324,14 +324,16 @@ Install use-package to make package management and configuration nicer.
     (setq
           org-completion-use-ido t
           org-deadline-warning-days 3
-          org-default-notes-file "~/Documents/gtd.org"
-          org-directory "~/Documents"
+          org-default-notes-file "~/Resilio/org/gtd.org"
+          org-directory "~/Resilio/org/"
           org-ellipsis " …"
           org-enforce-todo-dependencies t
           org-export-with-toc nil
           org-hide-leading-stars t
           org-log-done 'time
           org-log-into-drawer t
+          org-log-redeadline 'time
+          org-log-reschedule 'time
           org-outline-path-complete-in-steps nil
           org-refile-allow-creating-parent-nodes 'confirm
           org-refile-targets '((nil :maxlevel . 9)
@@ -343,10 +345,14 @@ Install use-package to make package management and configuration nicer.
           org-src-window-setup 'current-window
           org-startup-indented t)
     (set-face-attribute 'org-level-1 nil :height 1.6 :weight 'semi-bold)
-    (set-face-attribute 'org-level-2 nil :height 1.4 :weight 'semi-bold)
-    (set-face-attribute 'org-level-3 nil :height 1.2)
-    (set-face-attribute 'org-level-4 nil :height 1.1)
-    (set-face-attribute 'org-block nil :foreground nil) ; org 9... seems a bug in apropospriate
+    (set-face-attribute 'org-level-2 nil :height 0.875 :weight 'semi-bold)
+    (set-face-attribute 'org-level-3 nil :height 0.75)
+    (set-face-attribute 'org-level-4 nil :height 0.6875)
+    (set-face-attribute 'org-level-5 nil :height 0.625)
+    (set-face-attribute 'org-level-6 nil :height 0.625)
+    (set-face-attribute 'org-level-7 nil :height 0.625)
+    (set-face-attribute 'org-level-8 nil :height 0.625)
+    ;; (set-face-attribute 'org-block nil :foreground nil) ; org 9... seems a bug in apropospriate
     :config
     (use-package org-checklist)
     (use-package org-mime))
@@ -359,7 +365,7 @@ Install use-package to make package management and configuration nicer.
 
   (use-package org-agenda
     :init
-    (setq org-agenda-files '("~/Documents/gtd.org")
+    (setq org-agenda-files '("~/Resilio/org/")
           org-agenda-repeating-timestamp-show-all t
           org-agenda-restore-windows-after-quit t
           org-agenda-skip-deadline-if-done t
@@ -385,6 +391,7 @@ Install use-package to make package management and configuration nicer.
 
   (use-package magit
     :ensure t
+    :pin melpa-stable
     :bind (:map evil-normal-state-map
                 ("<SPC> g b" . magit-blame)
                 ("<SPC> g c" . magit-clone)
