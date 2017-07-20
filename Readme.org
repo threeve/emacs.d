@@ -534,6 +534,8 @@ Use flx-ido to get fuzzy matching.
 
   (use-package flx-ido
     :ensure t
+    ;; disabled because S...L...O...W...
+    :disabled t
     :after ido
     :config (flx-ido-mode t))
 
@@ -565,6 +567,7 @@ ido-vertical-mode turns that into a vertical list.
 
    (use-package smex
      :ensure t
+     :disabled t
      :bind (("M-x" . smex)
             ("M-X" . smex-major-mode-commands)))
 
@@ -581,6 +584,44 @@ ido-vertical-mode turns that into a vertical list.
                  ("<SPC> i" . idomenu)))
 
  #+END_SRC
+
+** Ivy
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ivy
+    :ensure t
+    :diminish ivy-mode
+    :bind (:map ivy-minibuffer-map
+                ("C-j" . ivy-next-line)
+                ("C-k" . ivy-previous-line))
+    :init
+    (setq ivy-count-format ""
+          ivy-format-function #'ivy-format-function-arrow
+          ivy-use-virtual-buffers t
+          ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+    :config
+    (ivy-mode t)
+    (with-eval-after-load 'magit
+      (setq magit-completing-read-function 'ivy-completing-read))
+    (with-eval-after-load 'projectile
+      (setq projectile-completion-system 'ivy)))
+
+  (use-package swiper
+    :ensure t)
+
+  (use-package ivy-hydra
+    :ensure t)
+
+  (use-package counsel
+    :ensure t
+    :bind (("M-x" . counsel-M-x)))
+
+  (use-package counsel-projectile
+    :ensure t
+    :config (counsel-projectile-on))
+
+#+END_SRC
 
 ** Company
 
