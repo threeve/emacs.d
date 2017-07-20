@@ -522,7 +522,7 @@ Ido-ubiquitous adds ido to many places that use completing-read like Magit and P
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package ido-ubiquitous
+  (use-package ido-completing-read+
     :ensure t
     :config (ido-ubiquitous-mode t))
 
