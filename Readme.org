@@ -123,6 +123,27 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+** Misc
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package recentf)
+
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package no-littering
+    :ensure t
+    :config
+    (with-eval-after-load 'recentf
+      (add-to-list 'recentf-exclude no-littering-var-directory)
+      (add-to-list 'recentf-exclude no-littering-etc-directory))
+    (setq auto-save-file-name-transforms
+          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+
+#+END_SRC
+
 * UI
 
 ** Theme
