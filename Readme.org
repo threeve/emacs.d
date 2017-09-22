@@ -152,7 +152,15 @@ Install use-package to make package management and configuration nicer.
 
   (use-package nord-theme
     :ensure t
-    :config (load-theme 'nord t))
+    :config
+    (load-theme 'nord t)
+    (with-eval-after-load 'ivy
+      (set-face-attribute 'ivy-current-match nil :underline '(:color "#88c0d0" :style line) :foreground nil :background nil)
+      (set-face-attribute 'ivy-minibuffer-match-face-1 nil :foreground nil :weight 'normal :background nil)
+      (set-face-attribute 'ivy-minibuffer-match-face-2 nil :foreground "#88c0d0" :weight 'bold :background nil)
+      (set-face-attribute 'ivy-minibuffer-match-face-3 nil :foreground "#88c0d0" :weight 'bold :background nil)
+      (set-face-attribute 'ivy-minibuffer-match-face-4 nil :foreground "#88c0d0" :weight 'bold :background nil))
+    )
 
   (use-package apropospriate-theme
     :ensure t
