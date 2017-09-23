@@ -928,7 +928,10 @@ Use =flycheck-package= for linting emacs packages.
 
 #+BEGIN_SRC emacs-lisp
 
-  (setq c-basic-offset 4)
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (c-set-offset 'innamespace 0)
+              (setq c-basic-offset 4)))
 
   ;; treat .mm files as objc. alas there is no objc++-mode
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
