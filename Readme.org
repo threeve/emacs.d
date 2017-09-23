@@ -1022,4 +1022,20 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
     :ensure t
     :pin melpa-stable)
 
+** Rust
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package rust-mode
+    :ensure t
+    :config
+    (setq rust-format-on-save t)
+    (use-package racer
+      :ensure t)
+    (use-package company-racer
+      :ensure t)
+    (use-package flycheck-rust
+      :ensure t
+      :after flycheck))
+
 #+END_SRC
