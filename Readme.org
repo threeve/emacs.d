@@ -644,6 +644,9 @@ ido-vertical-mode turns that into a vertical list.
 
   (use-package counsel-projectile
     :ensure t
+    :after projectile
+    :bind (:map projectile-command-map
+                ("/" . counsel-projectile-rg))
     :config (counsel-projectile-on))
 
 #+END_SRC
@@ -709,8 +712,6 @@ Company quickhelp can show inline documentation for company completion candidate
     :init
     (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
     :config
-    ;; "<SPC> p s s" is lame, this is better
-    (define-key projectile-command-map (kbd "/") #'projectile-ag)
     (with-eval-after-load 'evil
       (define-key evil-normal-state-map (kbd "<SPC> p") 'projectile-command-map))
     (projectile-global-mode))
@@ -725,8 +726,7 @@ Add [[https://github.com/BurntSushi/ripgrep][ripgrep]] support to projectile.
     :ensure t
     :after projectile
     :bind (:map projectile-command-map
-		("/" . projectile-ripgrep)
-		("s r" . projectile-ripgrep)))
+                ("s r" . projectile-ripgrep)))
 
 #+END_SRC
 
