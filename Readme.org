@@ -216,6 +216,16 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+Enable font ligatures when running the "Railwaycat" version of emacs
+that actually supports them.
+
+#+BEGIN_SRC emacs-lisp
+
+  (when (fboundp #'mac-auto-operator-composition-mode)
+    (mac-auto-operator-composition-mode))
+
+#+END_SRC
+
 ** Chrome
 
 #+BEGIN_SRC emacs-lisp
