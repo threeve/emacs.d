@@ -598,6 +598,7 @@ ido-vertical-mode turns that into a vertical list.
 
    (use-package idomenu
      :ensure t
+     :disabled t
      :after ido
      :bind (:map evil-normal-state-map
                  ("<SPC> i" . idomenu)))
@@ -634,7 +635,12 @@ ido-vertical-mode turns that into a vertical list.
 
   (use-package counsel
     :ensure t
-    :bind (("M-x" . counsel-M-x)))
+    :bind (("M-x" . counsel-M-x)
+           ("C-x C-f" . counsel-find-file)
+           ("C-h f" . counsel-describe-function)
+           ("C-h v" . counsel-describe-variable)
+           :map evil-normal-state-map
+           ("<SPC> i" . counsel-imenu)))
 
   (use-package counsel-projectile
     :ensure t
