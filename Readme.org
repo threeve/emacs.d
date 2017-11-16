@@ -369,6 +369,7 @@ that actually supports them.
           org-enforce-todo-dependencies t
           org-export-with-toc nil
           org-hide-leading-stars t
+          org-imenu-depth 4
           org-log-done 'time
           org-log-into-drawer t
           org-log-redeadline 'time
