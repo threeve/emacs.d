@@ -809,7 +809,9 @@ This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if
 #+BEGIN_SRC emacs-lisp
 
   (use-package editorconfig
-    :ensure t)
+    :ensure t
+    :diminish ""
+    :config (editorconfig-mode t))
 
 #+END_SRC
 
