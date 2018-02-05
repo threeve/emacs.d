@@ -3,6 +3,7 @@
 
 #+BEGIN_SRC emacs-lisp
 
+  (setq gc-cons-threshold most-positive-fixnum)
   (setq inhibit-default-init t
         load-prefer-newer t
         make-backup-files nil)
@@ -14,7 +15,6 @@
 Install use-package to make package management and configuration nicer.
 
 #+BEGIN_SRC emacs-lisp
-
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package))
@@ -97,14 +97,15 @@ Install use-package to make package management and configuration nicer.
     :config
     (setq which-key-idle-delay 0.2
           which-key-add-column-padding 0)
-    (which-key-declare-prefixes
+    (which-key-add-key-based-replacements
      "<SPC> g" '("scm" . "Magit, git, scm commands")
      "<SPC> p" '("projectile" . "Projectile commands")
      "<SPC> d" '("deft" . "notes: deft, etc")
      "<SPC> o" '("org" . "org mode")
+     "<SPC> r" "rtags"
      "<SPC> u" "package"
      "<SPC> n" "narrow"
-     ;; "<SPC> i" "idomenu"
+     "<SPC> i" "imenu"
      )
     (which-key-mode t))
 
@@ -144,6 +145,21 @@ Install use-package to make package management and configuration nicer.
 
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+
+  (defun my-minibuffer-setup-hook ()
+    "Embiggen the gc threshold"
+    (setq gc-cons-threshold most-positive-fixnum))
+
+  (defun my-minibuffer-exit-hook ()
+    "Restor the gc threshold"
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+#+END_SRC
+
 * UI
 
 ** Theme
@@ -153,6 +169,7 @@ Install use-package to make package management and configuration nicer.
   (use-package nord-theme
     :ensure t
     :config
+    (setq nord-comment-brightness 10)
     (load-theme 'nord t)
     (with-eval-after-load 'ivy
       (set-face-attribute 'ivy-current-match nil :underline '(:color "#88c0d0" :style line) :foreground nil :background nil)
@@ -393,9 +410,16 @@ that actually supports them.
     (set-face-attribute 'org-level-7 nil :height 0.625)
     (set-face-attribute 'org-level-8 nil :height 0.625)
     ;; (set-face-attribute 'org-block nil :foreground nil) ; org 9... seems a bug in apropospriate
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((plantuml . t)
+       (ditaa . t)))
+    (defun my-redisplay-inline-images ()
+      (when org-inline-image-overlays
+        (org-redisplay-inline-images)))
     :config
-    (use-package org-checklist)
-    (use-package org-mime))
+    (add-hook 'org-babel-after-execute-hook #'my-redisplay-inline-images)
+    (use-package org-checklist))
 
 #+END_SRC
 
@@ -442,7 +466,22 @@ that actually supports them.
     (use-package evil-magit :ensure t)
     (magit-define-popup-switch 'magit-log-popup
                                ?m "Omit merge commits" "--no-merges")
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'magit-insert-unpushed-to-upstream
+                            'magit-insert-unpushed-to-upstream-or-recent
+                            'replace)
     (setq magit-completing-read-function #'magit-ido-completing-read))
+
+#+END_SRC
+
+** Magithub
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package magithub
+    :ensure t
+    :after magit
+    :config (magithub-feature-autoinject t))
 
 #+END_SRC
 
@@ -585,10 +624,7 @@ ido-vertical-mode turns that into a vertical list.
  #+BEGIN_SRC emacs-lisp
 
    (use-package smex
-     :ensure t
-     :disabled t
-     :bind (("M-x" . smex)
-            ("M-X" . smex-major-mode-commands)))
+     :ensure t)
 
  #+END_SRC
 
@@ -619,7 +655,8 @@ ido-vertical-mode turns that into a vertical list.
     (setq ivy-count-format ""
           ivy-format-function #'ivy-format-function-arrow
           ivy-use-virtual-buffers t
-          ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+          ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+          )
     :config
     (ivy-mode t)
     (with-eval-after-load 'magit
@@ -645,9 +682,24 @@ ido-vertical-mode turns that into a vertical list.
   (use-package counsel-projectile
     :ensure t
     :after projectile
+    :demand t
     :bind (:map projectile-command-map
                 ("/" . counsel-projectile-rg))
-    :config (counsel-projectile-on))
+    :config (counsel-projectile-mode))
+
+#+END_SRC
+
+*** Ivy + Flyspell
+
+Integrate ivy completion with flyspell for fixing spelling errors.
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package flyspell-correct-ivy
+    :ensure t
+    :after ivy
+    :bind (:map flyspell-mode-map
+           ("C-;" . flyspell-correct-previous-word-generic)))
 
 #+END_SRC
 
@@ -666,7 +718,7 @@ modes via pluggable backends.
     (define-key company-active-map (kbd "C-j") #'company-select-next)
     (define-key company-active-map (kbd "C-p") #'company-select-previous)
     (define-key company-active-map (kbd "C-k") #'company-select-previous)
-    (setq company-idle-delay 0.2
+    (setq company-idle-delay 0.5
           company-dabbrev-downcase nil    ; pretty sure company has a bug in the default
           company-require-match nil
           company-selection-wrap-around t
@@ -701,6 +753,18 @@ Company quickhelp can show inline documentation for company completion candidate
 
 * Project and File Management
 
+** Searching
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package ripgrep
+    :ensure t
+    :config
+    (with-eval-after-load 'evil
+      (evil-set-initial-state 'ripgrep-search-mode 'motion)))
+
+#+END_SRC
+
 ** Projectile
 
 [[http://projectile.readthedocs.io/en/latest/][Projectile]] adds project management and navigation.
@@ -709,6 +773,7 @@ Company quickhelp can show inline documentation for company completion candidate
 
   (use-package projectile
     :ensure t
+    ;; :pin melpa-stable
     :init
     (setq projectile-mode-line '(:eval (format " P⟨%s⟩" (projectile-project-name))))
     :config
@@ -831,6 +896,7 @@ This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if
     (set-face-attribute 'markdown-header-face-4 nil :height 1.1))
 
   (use-package evil-markdown
+    :disabled t
     :load-path "~/.emacs.d/vendor/evil-markdown")
 
 #+END_SRC
@@ -870,10 +936,10 @@ Use =.dir-locals.el= to set =bug-reference-bug-regexp= as needed.
         compilation-scroll-output 'always)
 
   (require 'ansi-color)
-  (defun jafo/colorize-compilation-buffer ()
+  (defun my-colorize-compilation-buffer ()
     (let ((inhibit-read-only t))
       (ansi-color-apply-on-region compilation-filter-start (point))))
-  (add-hook 'compilation-filter-hook #'jafo/colorize-compilation-buffer)
+  (add-hook 'compilation-filter-hook #'my-colorize-compilation-buffer)
 
   (with-eval-after-load 'compile
     (add-to-list 'compilation-error-regexp-alist 'xcpretty)
@@ -1003,18 +1069,46 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
 
   (use-package rtags
     :ensure t
+    :disabled t
     :config
-    (use-package flycheck-rtags
-      :ensure t)
+    (defvar my-rtags-command-map (make-sparse-keymap))
+    (fset 'my-rtags-command-map my-rtags-command-map)
     (setq rtags-autostart-diagnostics t
           rtags-completions-enabled t)
-    (rtags-enable-standard-keybindings)
+    ;; (rtags-enable-standard-keybindings)
+    (rtags-enable-standard-keybindings my-rtags-command-map "")
+    (with-eval-after-load 'evil
+      (evil-define-key 'normal c-mode-base-map (kbd "<SPC> r") 'my-rtags-command-map))
     (rtags-diagnostics)
-    (with-eval-after-load 'company
-      (push 'company-rtags company-backends)))
+    )
+
+  (use-package flycheck-rtags
+    :ensure t
+    :after rtags)
+
+  (use-package ivy-rtags
+    :ensure t
+    :after rtags
+    :config
+    (setq rtags-display-result-backend 'ivy))
+
+  (use-package company-rtags
+    :ensure t
+    :after rtags
+    :config
+    (push 'company-rtags company-backends))
 
 #+END_SRC
 
+*** cquery
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cquery
+    :load-path "~/Source/cquery/emacs"
+    :disabled t
+    :defer t
+    :init (add-hook 'c-mode-common-hook (lambda () (lsp-cquery-enable))))
+#+END_SRC
 ** Djinni
 
 #+BEGIN_SRC emacs-lisp
@@ -1044,6 +1138,8 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
     :ensure t
     :pin melpa-stable)
 
+#+END_SRC
+
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
@@ -1060,4 +1156,28 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
       :ensure t
       :after flycheck))
 
+#+END_SRC
+
+** Rust
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package rust-mode
+    :ensure t
+    :config 
+    (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common))
+
+  (use-package racer
+    :ensure t
+    :after rust-mode
+    :config
+    (add-hook 'rust-mode-hook #'racer-mode)
+    (add-hook 'racer-mode-hook #'eldoc-mode))
+
+#+END_SRC
+
+* Finalize
+
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold 800000)
 #+END_SRC
