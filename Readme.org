@@ -45,7 +45,8 @@ Install use-package to make package management and configuration nicer.
 
   (setq mac-option-modifier 'none
         mac-command-modifier 'super
-        mac-right-command-modifier 'meta)
+        mac-right-command-modifier 'meta
+        mac-right-option-modifier 'meta)
 
   (global-set-key (kbd "s-a") #'mark-whole-buffer)
   (global-set-key (kbd "s-k") #'kill-this-buffer)
@@ -179,11 +180,6 @@ Install use-package to make package management and configuration nicer.
       (set-face-attribute 'ivy-minibuffer-match-face-4 nil :foreground "#88c0d0" :weight 'bold :background nil))
     )
 
-  (use-package apropospriate-theme
-    :ensure t
-    :disabled t
-    :config (load-theme 'apropospriate-dark t))
-
 #+END_SRC
 
 ** Fonts
@@ -269,6 +265,13 @@ that actually supports them.
   (scroll-bar-mode 0)
   (show-paren-mode t)
   (tool-bar-mode 0)
+
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+
+  (use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode))
 
 #+END_SRC
 
@@ -480,6 +483,7 @@ that actually supports them.
 
   (use-package magithub
     :ensure t
+    :disabled t
     :after magit
     :config (magithub-feature-autoinject t))
 
@@ -681,6 +685,7 @@ ido-vertical-mode turns that into a vertical list.
 
   (use-package counsel-projectile
     :ensure t
+    :disabled t
     :after projectile
     :demand t
     :bind (:map projectile-command-map
@@ -911,6 +916,7 @@ This allows Emacs to read [[http://editorconfig.org/][EditorConfig]] settings if
     :init (add-hook 'markdown-mode-hook #'pandoc-mode))
 
 #+END_SRC
+
 * Programming
 
 ** General
@@ -1109,6 +1115,7 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
     :defer t
     :init (add-hook 'c-mode-common-hook (lambda () (lsp-cquery-enable))))
 #+END_SRC
+
 ** Djinni
 
 #+BEGIN_SRC emacs-lisp
@@ -1148,31 +1155,17 @@ to install [[https://github.com/supermarin/xcpretty][xcpretty]] and filter the o
     :ensure t
     :config
     (setq rust-format-on-save t)
+    (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
     (use-package racer
-      :ensure t)
+      :ensure t
+      :config
+      (add-hook 'rust-mode-hook #'racer-mode)
+      (add-hook 'racer-mode-hook #'eldoc-mode))
     (use-package company-racer
       :ensure t)
     (use-package flycheck-rust
       :ensure t
       :after flycheck))
-
-#+END_SRC
-
-** Rust
-
-#+BEGIN_SRC emacs-lisp
-
-  (use-package rust-mode
-    :ensure t
-    :config 
-    (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common))
-
-  (use-package racer
-    :ensure t
-    :after rust-mode
-    :config
-    (add-hook 'rust-mode-hook #'racer-mode)
-    (add-hook 'racer-mode-hook #'eldoc-mode))
 
 #+END_SRC
 
